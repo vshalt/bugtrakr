@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Detail{% endblock title %}
+{% block content %}
+<div>
+<h1>{{ project.title }}</h1>
+<small>Created on {{ post.created }}</small>
+{{ post.description|linebreaks }}
+<hr>
+    {% if 'admin' in roles or 'manager' in roles or request.user.is_admin %}
+        <form method='POST' action='{% url "projects:archive" id=project.id %}'>
+            {% csrf_token %}
+            <input type="submit" value="{% if project.archived %}Unarchive{% else %}Archive{% endif %}">
+        </form>
+        <a href="{% url 'projects:edit' id=project.id %}"><button>Edit</button></a>
+    {% endif %}
+
+</div>
+{% endblock content %}

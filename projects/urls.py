@@ -9,6 +9,5 @@ urlpatterns = [
     path('create/', views.project_create, name='create'),
     path('edit/<int:id>', views.edit_project, name='edit'),
     path('archived/', views.archived_projects, name='archived'),
-    path('archive/<int:id>', views.archive_project, name='archive'),
     path('assign/<int:id>', views.assign_users, name='assign'),
 ]

@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import Http404
+from django.contrib import messages
 
 from .utils import get_user_roles
 from .forms import ProjectForm, AddUserForm, RemoveUserForm
@@ -35,7 +36,9 @@ def project_detail(request, id):
         project = Project.objects.get(pk=id)
     except Project.DoesNotExist:
         raise Http404
-    return render(request, 'projects/detail.html', {'project': project})
+    user, roles = get_user_roles()
+    return render(request, 'projects/detail.html',
+                  {'project': project, 'roles': roles})
 
 
 @login_required
@@ -93,10 +96,12 @@ def archive_project(request, id):
     except Project.DoesNotExist:
         raise Http404
     if request.method == 'POST':
-        project.archived = True
+        if project.archived is False:
+            project.archived = True
+        else:
+            project.archived = False
         project.save()
-        return redirect('projects:archived')
-
+    return redirect('projects:list')
 
 @login_required
 @is_admin_or_manager

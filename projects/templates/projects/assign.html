@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Assign users{% endblock title %}
+{% block content %}
+<h1>Assign users</h1>
+<h3>Assigned users</h3>
+<form method='POST'>
+    {% csrf_token %}
+    {{ add_form.as_p }}
+    <input type="submit" value="Update">
+</form>
+
+<h3>All users</h3>
+<form method='POST'>
+    {% csrf_token %}
+    {{ remove_form.as_p }}
+    <input type="submit" value="Update">
+</form>
+{% endblock content %}
