@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig',
+    'projects.apps.ProjectsConfig',
 ]
 
 MIDDLEWARE = [
@@ -130,4 +131,6 @@ AUTHENTICATION_BACKENDS = [
     'accounts.authentications.EmailAuthBackend',
 ]
 
-# TEMPLATES, PROJECTS, TICKETS
+PROJECTS_PER_PAGE = 10
+
+# TEMPLATES, PROJECTS, TICKETS, ADMIN page
