@@ -18,7 +18,7 @@ from django.urls import path, include
 from accounts import views as account_views
 
 urlpatterns = [
-    path('', account_views.dashboard),
+    path('', account_views.dashboard, name='dashboard'),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('projects/', include('projects.urls', namespace='projects'))

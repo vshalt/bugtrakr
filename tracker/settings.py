@@ -31,14 +31,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'accounts.apps.AccountsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts.apps.AccountsConfig',
     'projects.apps.ProjectsConfig',
+    'tickets.apps.TicketsConfig',
 ]
 
 MIDDLEWARE = [
@@ -127,10 +128,11 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.models.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
     'accounts.authentications.EmailAuthBackend',
 ]
 
 PROJECTS_PER_PAGE = 10
-
-# TEMPLATES, PROJECTS, TICKETS, ADMIN page
+USERS_PER_PAGE = 20
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_USER = 'user@email.com'
