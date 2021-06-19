@@ -1,11 +1,40 @@
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import Http404
 from django.shortcuts import render, redirect
-from .models import Profile
-from .forms import RegisterForm, LoginForm, UserEditForm, ProfileEditForm
+from .models import Profile, User
+from .forms import (
+    RegisterForm, LoginForm, UserEditForm, ProfileEditForm, EditRolesForm)
+from projects.decorators import is_admin, is_admin_or_manager
+from projects.utils import get_user_roles
 
-User = get_user_model()
+
+def user_list(request):
+    users = User.objects.all()
+    paginator = Paginator(users, settings.USERS_PER_PAGE)
+    page = request.GET.get('page')
+    try:
+        users = paginator.page(page)
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
+    roles = None
+    if request.user.is_authenticated:
+        user, roles = get_user_roles(request)
+    return render(request, 'accounts/list.html',
+                  {'users': users, 'roles': roles})
+
+
+def user_detail(request, id):
+    try:
+        user = User.objects.get(pk=id)
+    except User.DoesNotExist:
+        raise Http404
+    return render(request, 'accounts/detail.html', {'user': user})
 
 
 def user_register(request):
@@ -15,7 +44,7 @@ def user_register(request):
             user = form.save(commit=False)
             user.save()
             messages.success(request, 'Account created, login to continue')
-            return redirect('user_login')
+            return redirect('login')
     else:
         form = RegisterForm()
     return render(request, 'registration/register.html', {'form': form})
@@ -37,13 +66,15 @@ def user_login(request):
             else:
                 messages.error(request, 'Invalid account')
         return redirect('dashboard')
+    else:
+        form = LoginForm()
     return render(request, 'registration/login.html', {'form': form})
 
 
 @login_required
 def user_logout(request):
     logout(request)
-    messages.success('Logged out')
+    messages.success(request, 'Logged out')
     return redirect('dashboard')
 
 
@@ -67,3 +98,23 @@ def user_edit(request):
         profile_form = ProfileEditForm(instance=request.user.profile)
     return render(request, 'accounts/edit.html',
                   {'user_form': user_form, 'profile_form': profile_form})
+
+
+@login_required
+@is_admin
+def user_role(request, id):
+    try:
+        user = User.objects.get(pk=id)
+    except User.DoesNotExist:
+        raise Http404
+    roles = [role for role in user.profile.roles]
+    if request.method == 'POST':
+        form = EditRolesForm(data=request.POST, instance=user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect('user_list')
+    else:
+        form = EditRolesForm(instance=user.profile)
+    return render(request, 'accounts/roles.html',
+                  {'form': form, 'roles': roles})
+

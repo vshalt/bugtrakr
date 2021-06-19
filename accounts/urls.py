@@ -8,7 +8,10 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     path('register/', views.user_register, name='register'),
-    path('edit/', views.user_login, name='edit'),
+    path('edit/', views.user_edit, name='edit'),
+    path('list/', views.user_list, name='user_list'),
+    path('detail/<int:id>/', views.user_detail, name='user_detail'),
+    path('role/<int:id>/', views.user_role, name='user_role'),
 
     # Change and reset password
     path('change/', auth_views.PasswordChangeView.as_view(),

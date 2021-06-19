@@ -14,7 +14,7 @@ class ProjectForm(forms.ModelForm):
 class AddUserForm(forms.Form):
     def __init__(self, project_users, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['assigned'] = forms.ModelMulipleChoiceField(project_users)
+        self.fields['assigned'] = forms.ModelMultipleChoiceField(project_users)
         self.fields['assigned'].label = 'Assigned users'
         self.fields['assigned'].required = False
 

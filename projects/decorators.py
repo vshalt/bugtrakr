@@ -22,9 +22,9 @@ def is_admin_or_manager(f):
     @wraps(f)
     def wrap(request, *args, **kwargs):
         user, roles = get_user_roles(request)
-        if 'admin' in roles or 'manager' in roles or user.is_admin:
+        if 'admin' in roles or 'manager' in roles or user.is_superuser:
             return f(request, *args, **kwargs)
-        return PermissionDenied
+        raise PermissionDenied
     return wrap
 
 
@@ -41,8 +41,8 @@ def is_manager(f):
 def is_admin(f):
     @wraps(f)
     def wrap(request, *args, **kwargs):
-        user, roles = get_user_roles()
-        if 'admin' in roles or user.is_admin:
+        user, roles = get_user_roles(request)
+        if 'admin' in roles or user.is_superuser:
             return f(request, *args, **kwargs)
         raise PermissionDenied
     return wrap

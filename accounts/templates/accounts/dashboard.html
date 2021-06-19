@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}Dashboard{% endblock title %}
 {% block content %}
+{% if request.user %}
+Hello {{ request.user }}
+{% endif %}
+Hello
 {% endblock content %}

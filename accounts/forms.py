@@ -37,3 +37,14 @@ class ProfileEditForm(forms.ModelForm):
         model = Profile
         fields = ('github',)
         help_texts = {'github': 'Enter your github username'}
+
+
+class EditRolesForm(forms.ModelForm):
+    roles = forms.MultipleChoiceField(
+        required=False, widget=forms.CheckboxSelectMultiple,
+        choices=Profile.choices)
+
+    class Meta():
+        model = Profile
+        fields = ('roles',)
+

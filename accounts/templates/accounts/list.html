@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}User list{% endblock title %}
+{% block content %}
+{% for user in users %}
+    <div>
+    <a href="{% url 'user_detail' id=user.id %}">
+        {{ user.username }}
+        {{ user.email }}
+    </a>
+    {% if user.is_authenticated %}
+    {% if 'admin' in roles or request.user.is_superuser %}
+    <a href="{% url 'user_role' id=user.id %}"><button>Edit role</button></a>
+    {% endif %}
+    {% endif %}
+
+    {% if not forloop.lastloop %}
+    <hr>
+    {% endif %}
+    </div>
+{% endfor %}
+{% include 'pagination.html' with page=users %}
+{% endblock content %}

@@ -13,7 +13,7 @@ from .decorators import is_admin_or_manager
 
 @login_required
 def project_list(request):
-    user, roles = get_user_roles()
+    user, roles = get_user_roles(request)
     if 'admin' in roles:
         projects = Project.objects.filter(archived=False)
     else:
@@ -36,7 +36,7 @@ def project_detail(request, id):
         project = Project.objects.get(pk=id)
     except Project.DoesNotExist:
         raise Http404
-    user, roles = get_user_roles()
+    user, roles = get_user_roles(request)
     return render(request, 'projects/detail.html',
                   {'project': project, 'roles': roles})
 
@@ -47,7 +47,7 @@ def project_create(request):
     if request.method == 'POST':
         form = ProjectForm(data=request.POST)
         if form.is_valid():
-            project = form.save(commit=False)
+            project = form.save()
             project.users.add(request.user)
             project.save()
             return redirect('projects:detail', id=project.id)
@@ -60,7 +60,7 @@ def project_create(request):
 @is_admin_or_manager
 def edit_project(request, id):
     try:
-        project = Project.object.get(pk=id)
+        project = Project.objects.get(pk=id)
     except Project.DoesNotExist:
         raise Http404
     if request.method == 'POST':
@@ -76,6 +76,7 @@ def edit_project(request, id):
 @login_required
 @is_admin_or_manager
 def archived_projects(request):
+    user, roles = get_user_roles(request)
     projects = Project.objects.filter(archived=True)
     paginator = Paginator(projects, settings.PROJECTS_PER_PAGE)
     page = request.GET.get('page')
@@ -85,7 +86,8 @@ def archived_projects(request):
         projects = paginator.page(1)
     except EmptyPage:
         projects = paginator.page(paginator.num_pages)
-    return render(request, 'projects/archived.html', {'projects': projects})
+    return render(request, 'projects/archived.html',
+                  {'projects': projects, 'roles': roles})
 
 
 @login_required

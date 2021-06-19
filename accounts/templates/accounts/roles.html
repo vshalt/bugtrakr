@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Roles{% endblock title %}
+{% block content %}
+<h1>Edit the user roles</h1>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p}}
+    <input type="submit" value="Confirm roles">
+</form>
+{% endblock content %}
