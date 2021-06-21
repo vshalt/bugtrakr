@@ -1,8 +1,8 @@
 from functools import wraps
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
-from .models import Project, User
-from .utils import get_user_roles
+from projects.models import Project, User
+from common.utils import get_user_roles
 
 
 def project_exists(f):

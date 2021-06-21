@@ -5,10 +5,11 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import Http404
 from django.contrib import messages
 
-from .utils import get_user_roles
+from accounts.models import Profile
+from common.decorators import is_admin_or_manager
+from common.utils import get_user_roles
 from .forms import ProjectForm, AddUserForm, RemoveUserForm
 from .models import Project, User
-from .decorators import is_admin_or_manager
 
 
 @login_required
@@ -18,7 +19,7 @@ def project_list(request):
         projects = Project.objects.filter(archived=False)
     else:
         projects = Project.objects.filter(
-            users__id=request.user.id, archived=False)
+            users__id=request.user.profile.id, archived=False)
     paginator = Paginator(projects, settings.PROJECTS_PER_PAGE)
     page = request.GET.get('page')
     try:
@@ -27,6 +28,7 @@ def project_list(request):
         projects = paginator.page(1)
     except EmptyPage:
         projects = paginator.page(paginator.num_pages)
+    print(request.get_host())
     return render(request, 'projects/list.html', {'projects': projects})
 
 
@@ -48,7 +50,7 @@ def project_create(request):
         form = ProjectForm(data=request.POST)
         if form.is_valid():
             project = form.save()
-            project.users.add(request.user)
+            project.users.add(request.user.profile)
             project.save()
             return redirect('projects:detail', id=project.id)
     else:
@@ -119,7 +121,7 @@ def assign_users(request, id):
         remove_form = RemoveUserForm(all_users, data=request.POST)
         if request.POST.get('assigned'):
             selected = request.POST.getlist('assigned')
-            to_remove = User.objects.filter(id__in=selected)
+            to_remove = Profile.objects.filter(id__in=selected)
             if remove_form.is_valid():
                 for user in to_remove:
                     project.users.remove(user)

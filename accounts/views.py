@@ -8,8 +8,8 @@ from django.shortcuts import render, redirect
 from .models import Profile, User
 from .forms import (
     RegisterForm, LoginForm, UserEditForm, ProfileEditForm, EditRolesForm)
-from projects.decorators import is_admin, is_admin_or_manager
-from projects.utils import get_user_roles
+from common.decorators import is_admin, is_admin_or_manager
+from common.utils import get_user_roles
 
 
 def user_list(request):
