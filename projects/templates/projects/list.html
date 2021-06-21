@@ -17,6 +17,7 @@
         <a href="{% url 'projects:edit' id=project.id %}"><button>Edit</button></a>
         <a href="{% url 'projects:assign' id=project.id %}"><button>Assign</button></a>
     {% endif %}
+        <a href="{% url 'tickets:create' %}?pid={{ project.id }}"><button>New ticket</button></a>
     {% if not forloop.lastloop %}
         <hr>
     {% endif %}
