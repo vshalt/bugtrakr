@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Ticket detail{% endblock title %}
+{% block content %}
+<h1>{{ ticket.title }}</h1>
+<small>Last updated: {{ ticket.last_modified }}, created: {{ ticket.created }}</small>
+<p>Opened by <a href="{{ ticket.owner.get_absolute_url }}">{{ ticket.owner }}</a></p>
+{% if ticket.assigned_user %}
+<p>Assigned to <a href="{{ ticket.assigned_user.get_absolute_url }}">{{ ticket.assigned_user }}</a></p>
+{% endif %}
+<p>Priority: {{ ticket.priority }}</p>
+<p>Status: {{ ticket.status }}</p>
+<p>Classification: {{ ticket.classification }}</p>
+<hr>
+{{ ticket.description|linebreaks }}
+{% endblock content %}

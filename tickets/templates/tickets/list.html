@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Tickets list{% endblock title %}
+{% block content %}
+{% for ticket in tickets %}
+<div>
+    <a href="{{ ticket.get_absolute_url }}"><h3>{{ ticket.title }}</h3></a>
+    <small>Last updated: {{ ticket.last_modified }}, created: {{ ticket.created }}</small>
+    {{ ticket.description|linebreaks|truncatewords:30 }}
+    <a href="{% url 'tickets:edit' id=ticket.id %}"><button>Edit</button></a>
+    <a href="{% url 'tickets:assign' id=ticket.id %}"><button>Assign</button></a>
+    <a href="{% url 'tickets:history' id=ticket.id %}"><button>History</button></a>
+</div>
+{% if forloop.lastloop %}
+<hr>
+{% endif %}
+{% endfor %}
+{% endblock content %}

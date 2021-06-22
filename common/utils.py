@@ -21,3 +21,7 @@ def send_ticket_update_email(profile, ticket):
                                  from_email=from_email, to=[to])
     msg.attach_alternative(html_content, 'text/html')
     msg.send()
+
+
+def send_ticket_assign_email(user, ticket):
+    pass

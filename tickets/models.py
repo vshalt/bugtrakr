@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from accounts.models import Profile
 from projects.models import Project
 
@@ -36,6 +37,9 @@ class Ticket(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('tickets:detail', args=[self.id])
 
 
 class TicketHistory(models.Model):

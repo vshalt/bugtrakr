@@ -19,8 +19,18 @@
         <a href="{% url 'projects:list' %}">list</a>
         <a href="{% url 'projects:create' %}">create</a>
         <a href="{% url 'projects:archived' %}">archived</a>
+        <h1>Ticket</h1>
+        <a href="{% url 'tickets:list' %}">list</a>
+        <a href="{% url 'tickets:create' %}">create</a>
 
     </div>
+    {% if messages %}
+    <ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %}class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
     {% block content %}
     {% endblock content %}
 </body>

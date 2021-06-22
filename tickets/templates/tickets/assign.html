@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Ticket assign{% endblock title %}
+{% block content %}
+<h1>Assign user to ticket</h1>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Assign user">
+</form>
+{% endblock content %}

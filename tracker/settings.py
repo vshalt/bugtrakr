@@ -134,5 +134,6 @@ AUTHENTICATION_BACKENDS = [
 
 PROJECTS_PER_PAGE = 10
 USERS_PER_PAGE = 20
+TICKETS_PER_PAGE = 10
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_USER = 'user@email.com'

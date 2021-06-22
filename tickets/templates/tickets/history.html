@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Ticket history{% endblock title %}
+{% block content %}
+<h1>History of ticket: '{{ ticket }}'</h1>
+{% for tick in history %}
+<div>
+    <h3>{{ tick.message|linebreaks }}</h3>
+    <small>Updated on {{ tick.created }} by <a href="{{ tick.user.get_absolute_url }}">{{ tick.user }}</a></small>
+</div>
+{% endfor %}
+{% endblock content %}

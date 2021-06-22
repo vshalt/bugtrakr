@@ -1,6 +1,7 @@
 from django import forms
 from django.http import Http404
 
+from accounts.models import Profile
 from projects.models import Project
 from .models import Ticket, TicketHistory
 from common.utils import send_ticket_update_email, get_user_roles
@@ -19,6 +20,7 @@ class TicketCreateForm(forms.ModelForm):
         self.user, self.roles = get_user_roles(request)
         self.fields['project'].queryset = Project.objects.filter(
             users__id=request.user.profile.id)
+        self.fields['project'].empty_label = 'Select a project'
         if ('admin' in self.roles or 'manager' in self.roles
             or self.user.is_superuser):
             pass
@@ -35,11 +37,14 @@ class TicketCreateForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit=True)
-        instance.owner = self.profile
+        if not instance.owner:
+            instance.owner = self.profile
+            instance.save()
         if self.initial_project is None:
             TicketHistory.objects.create(
                 ticket=self.instance, user=self.profile,
                 message=(
+                    f"Ticket created:\n"
                     f"Title: {self.instance.title}\n"
                     f"Project: {self.instance.project}\n"
                     f"Description: {self.instance.description}\n"
@@ -66,8 +71,8 @@ class TicketCreateForm(forms.ModelForm):
                     if change == 'classification':
                         TicketHistory.objects.create(
                             user=self.profile, ticket=self.instance, message=(
-                                f"Type changed from {self.initial_classification}'"
-                                f"to {self.instance.classification}"))
+                                f"Type changed from '{self.initial_classification}'"
+                                f"to '{self.instance.classification}'"))
                     if change == 'priority':
                         TicketHistory.objects.create(
                             user=self.profile, ticket=self.instance, message=(
@@ -91,3 +96,13 @@ class TicketCreateForm(forms.ModelForm):
         model = Ticket
         fields = ('title', 'description', 'project', 'classification',
                   'status', 'priority')
+
+
+class TicketAssignForm(forms.Form):
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
+    queryset = Profile.objects.filter(roles__contains='developer')
+    assigned_user = forms.ModelChoiceField(
+        queryset=queryset, empty_label='Select a user')
