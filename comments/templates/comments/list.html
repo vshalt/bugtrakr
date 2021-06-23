@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Comments list{% endblock title %}
+{% block content %}
+    {% for comment in comments %}
+    <div>
+        Comment by <a href="{{ comment.user.get_absolute_url }}">{{ comment.user }}</a>
+        <hr>
+        {{ comment.body }}
+        <form method='POST' action="{% url 'comments:archive' id=comment.id %}?tid={{ comment.ticket.pk }}">
+            {% csrf_token %}
+            <input type="submit" value="{% if comment.archived is True %}Unarchive{% else %}Archive{% endif %}">
+        </form>
+        <a href="{% url 'comments:edit' id=comment.id %}">Edit</a>
+    </div>
+    {% endfor %}
+{% endblock content %}
