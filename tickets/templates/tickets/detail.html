@@ -12,4 +12,26 @@
 <p>Classification: {{ ticket.classification }}</p>
 <hr>
 {{ ticket.description|linebreaks }}
+<a href="{% url 'comments:create' %}?tid={{ ticket.id }}">Comment</a>
+<h2>Comments</h2>
+{% for comment in comments %}
+<div>
+    Comment by <a href="{{ comment.user.get_absolute_url }}">{{ comment.user }}</a>
+    {{ comment.body|linebreaks }}
+    {% if 'admin' in roles or 'manager' in roles or request.user.is_superuser %}
+    <form method='POST' action="{% url 'comments:archive' id=comment.id %}?tid={{ ticket.id }}">
+        {% csrf_token %}
+        <input type="submit" value="{% if comment.archived is True %}Unarchive{% else %}Archive{% endif %}">
+    </form>
+    {% endif %}
+    {% if request.user.profile == comment.user %}
+    <a href="{% url 'comments:edit' id=comment.id %}?tid={{ ticket.id }}">Edit comment</a>
+    {% endif %}
+    {% if not forloop.lastloop %}
+        <hr>
+    {% endif %}
+</div>
+{% empty %}
+No comments yet
+{% endfor %}
 {% endblock content %}

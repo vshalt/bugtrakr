@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'projects.apps.ProjectsConfig',
     'tickets.apps.TicketsConfig',
+    'comments.apps.CommentsConfig',
 ]
 
 MIDDLEWARE = [
@@ -133,7 +134,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 PROJECTS_PER_PAGE = 10
-USERS_PER_PAGE = 20
 TICKETS_PER_PAGE = 10
+USERS_PER_PAGE = 20
+COMMENTS_PER_PAGE = 20
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_USER = 'user@email.com'

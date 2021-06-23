@@ -14,5 +14,23 @@
         <a href="{% url 'projects:edit' id=project.id %}"><button>Edit</button></a>
     {% endif %}
 
+<h2>Tickets</h2>
+{% for ticket in tickets %}
+<div>
+    <a href="{{ ticket.get_absolute_url }}"><h3>{{ ticket.title }}</h3></a>
+    <small>Last updated: {{ ticket.last_modified }}, created: {{ ticket.created }}</small>
+    {{ ticket.description|linebreaks|truncatewords:30 }}
+    <a href="{% url 'tickets:edit' id=ticket.id %}"><button>Edit</button></a>
+    <a href="{% url 'tickets:assign' id=ticket.id %}"><button>Assign</button></a>
+    <a href="{% url 'tickets:history' id=ticket.id %}"><button>History</button></a>
+    <a href="{% url 'comments:create' %}?tid={{ ticket.id }}"><button>Comment</button></a>
+    {{ ticket.comments.count }} Comment{{ ticket.comments.count|pluralize }}
+</div>
+{% if forloop.lastloop %}
+<hr>
+{% endif %}
+{% empty %}
+No tickets yet
+{% endfor %}
 </div>
 {% endblock content %}

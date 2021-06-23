@@ -8,6 +8,7 @@ from django.contrib import messages
 from accounts.models import Profile
 from common.decorators import is_admin_or_manager
 from common.utils import get_user_roles
+from tickets.models import Ticket
 from .forms import ProjectForm, AddUserForm, RemoveUserForm
 from .models import Project, User
 
@@ -39,8 +40,9 @@ def project_detail(request, id):
     except Project.DoesNotExist:
         raise Http404
     user, roles = get_user_roles(request)
+    tickets = Ticket.objects.filter(project=project)
     return render(request, 'projects/detail.html',
-                  {'project': project, 'roles': roles})
+                  {'project': project, 'roles': roles, 'tickets': tickets})
 
 
 @login_required

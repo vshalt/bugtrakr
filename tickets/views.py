@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from common.utils import get_user_roles, send_ticket_assign_email
 from common.decorators import is_admin_or_manager
 from projects.models import Project
+from comments.models import Comment
 from .models import Ticket, TicketHistory
 from .forms import TicketCreateForm, TicketAssignForm
 
@@ -35,11 +36,15 @@ def ticket_list(request):
 
 @login_required
 def ticket_detail(request, id):
+    user, roles = get_user_roles(request)
     try:
         ticket = Ticket.objects.get(pk=id)
     except Ticket.DoesNotExist:
         raise Http404
-    return render(request, 'tickets/detail.html', {'ticket': ticket})
+    comments = Comment.objects.filter(
+        ticket=ticket, archived=False).order_by('-created')
+    return render(request, 'tickets/detail.html',
+                  {'ticket': ticket, 'comments': comments, 'roles': roles})
 
 
 @login_required
