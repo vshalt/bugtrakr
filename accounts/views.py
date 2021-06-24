@@ -112,9 +112,21 @@ def user_role(request, id):
         form = EditRolesForm(data=request.POST, instance=user.profile)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Roles saved')
             return redirect('user_list')
     else:
         form = EditRolesForm(instance=user.profile)
     return render(request, 'accounts/roles.html',
                   {'form': form, 'roles': roles})
 
+
+def error_404(request, exception=None):
+    return render(request, 'errors/404.html')
+
+
+def error_403(request, exception=None):
+    return render(request, 'errors/403.html')
+
+
+def error_500(request):
+    return render(request, 'errors/500.html')
