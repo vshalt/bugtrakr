@@ -29,7 +29,6 @@ def project_list(request):
         projects = paginator.page(1)
     except EmptyPage:
         projects = paginator.page(paginator.num_pages)
-    print(request.get_host())
     return render(request, 'projects/list.html', {'projects': projects})
 
 
@@ -54,6 +53,7 @@ def project_create(request):
             project = form.save()
             project.users.add(request.user.profile)
             project.save()
+            messages.success(request, 'Project created successfully')
             return redirect('projects:detail', id=project.id)
     else:
         form = ProjectForm()
@@ -71,6 +71,7 @@ def edit_project(request, id):
         form = ProjectForm(data=request.POST, instance=project)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Project updated successfully')
             return redirect('projects:detail', id=project.id)
     else:
         form = ProjectForm(instance=project)
@@ -107,7 +108,9 @@ def archive_project(request, id):
         else:
             project.archived = False
         project.save()
+        messages.success(request, 'Project archived')
     return redirect('projects:list')
+
 
 @login_required
 @is_admin_or_manager
@@ -127,12 +130,14 @@ def assign_users(request, id):
             if remove_form.is_valid():
                 for user in to_remove:
                     project.users.remove(user)
+                    messages.success(request, 'Users removed successfully')
         if request.POST.get('all_users'):
             selected = request.POST.get('all_users')
             to_add = request.POST.getlist('all_users')
             if add_form.is_valid():
                 for user in to_add:
                     project.users.add(user)
+                    messages.success(request, 'Users added successfully')
     else:
         add_form = AddUserForm(project_users)
         remove_form = RemoveUserForm(all_users)

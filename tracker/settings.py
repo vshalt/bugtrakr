@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +29,7 @@ SECRET_KEY = 'django-insecure-4h0bvo*drrbr3rj)5rf=sg2#v0m#t-!05=i$9tq1&sgvtln2$m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -139,3 +143,15 @@ USERS_PER_PAGE = 20
 COMMENTS_PER_PAGE = 20
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_USER = 'user@email.com'
+
+SUBMITTER_EMAIL = os.environ.get('SUBMITTER_EMAIL')
+SUBMITTER_PASSWORD = os.environ.get('SUBMITTER_PASSWORD')
+
+DEVELOPER_EMAIL = os.environ.get('DEVELOPER_EMAIL')
+DEVELOPER_PASSWORD = os.environ.get('DEVELOPER_PASSWORD')
+
+MANAGER_EMAIL = os.environ.get('MANAGER_EMAIL')
+MANAGER_PASSWORD = os.environ.get('MANAGER_PASSWORD')
+
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
+ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD')

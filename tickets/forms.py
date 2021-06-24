@@ -10,7 +10,6 @@ from common.utils import send_ticket_update_email, get_user_roles
 class TicketCreateForm(forms.ModelForm):
     def __init__(self, project_id, request, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        print(self.fields)
         self.request = request
         self.profile = request.user.profile
         self.initial_title = self.instance.title
@@ -84,12 +83,13 @@ class TicketCreateForm(forms.ModelForm):
                                 f"Status changed from '{self.initial_status}'"
                                 f"to '{self.instance.status}'"))
         if commit:
-            if self.user is not instance.assigned_user and \
+            print(self.profile, instance, instance.assigned_user)
+            if self.profile is not instance.assigned_user and \
                     instance.assigned_user is not None:
-                # send_ticket_update_email(
-                #     self.user, self.instance, instance.assigned_user)
-                pass
-                instance.save()
+                print('trying to send email')
+                send_ticket_update_email(
+                    self.profile, self.instance, instance.assigned_user)
+            instance.save()
         return instance
 
     class Meta():

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib import messages
 from django.conf import settings
 from common.decorators import is_admin_or_manager
 from .models import Comment
@@ -24,6 +25,8 @@ def comment_list(request):
     return render(request, 'comments/list.html', {'comments': comments})
 
 
+@login_required
+@is_admin_or_manager
 def comment_archive(request, id):
     tid = request.GET.get('tid')
     try:
@@ -53,6 +56,7 @@ def comment_create(request):
             comment.ticket = ticket
             comment.user = request.user.profile
             comment.save()
+            messages.success(request, 'Comment created successfully')
             return redirect('tickets:detail', id=tid)
     else:
         form = CommentCreateForm()
@@ -74,6 +78,7 @@ def comment_edit(request, id):
         form = CommentCreateForm(data=request.POST, instance=comment)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Comment updated successfully')
             return redirect(ticket.get_absolute_url())
     else:
         form = CommentCreateForm(instance=comment)

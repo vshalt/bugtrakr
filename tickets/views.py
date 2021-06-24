@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import render, redirect
 from common.utils import get_user_roles, send_ticket_assign_email
@@ -49,36 +50,39 @@ def ticket_detail(request, id):
 
 @login_required
 def ticket_create(request):
-    project_id = request.GET.get('pid')
+    pid = request.GET.get('pid')
     if request.method == 'POST':
         form = TicketCreateForm(
-            project_id=project_id, request=request, data=request.POST)
+            project_id=pid, request=request, data=request.POST)
         if form.is_valid():
             form.save()
-            return redirect('tickets:list')
+            messages.success(request, 'Ticket created successfully')
+            cd = form.cleaned_data
+            return redirect('projects:detail', id=cd['project'].id)
     else:
-        form = TicketCreateForm(
-            project_id=project_id, request=request)
+        form = TicketCreateForm(project_id=pid, request=request)
     return render(request, 'tickets/create.html', {'form': form})
 
 
 @login_required
 def ticket_edit(request, id):
-    project_id = request.GET.get('pid')
+    pid = request.GET.get('pid')
     try:
         ticket = Ticket.objects.get(pk=id)
     except Ticket.DoesNotExist:
         raise Http404
     if request.method == 'POST':
         form = TicketCreateForm(
-            project_id=project_id, request=request, data=request.POST,
+            project_id=pid, request=request, data=request.POST,
             instance=ticket)
         if form.is_valid():
             form.save()
-            return redirect('tickets:list')
+            messages.success(request, 'Ticket updated successfully')
+            cd = form.cleaned_data
+            return redirect('projects:detail', id=cd['project'].id)
     else:
         form = TicketCreateForm(
-            project_id=project_id, request=request, instance=ticket)
+            project_id=pid, request=request, instance=ticket)
     return render(request, 'tickets/edit.html', {'form': form})
 
 
@@ -97,12 +101,14 @@ def ticket_assign(request, id):
             ticket.save()
             user = cd['assigned_user']
             send_ticket_assign_email(user, ticket)
+            messages.success(request, 'Ticket assigned successfully')
             return redirect('tickets:list')
     else:
         form = TicketAssignForm(request=request)
     return render(request, 'tickets/assign.html', {'form': form})
 
 
+@login_required
 def ticket_history(request, id):
     try:
         ticket = Ticket.objects.get(pk=id)

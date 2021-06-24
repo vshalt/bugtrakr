@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls import handler404, handler403, handler500
 from accounts import views as account_views
 
 urlpatterns = [
@@ -25,3 +26,8 @@ urlpatterns = [
     path('tickets/', include('tickets.urls', namespace='tickets')),
     path('comments/', include('comments.urls', namespace='comments')),
 ]
+
+handler403 = account_views.error_403
+handler404 = account_views.error_404
+handler500 = account_views.error_500
+
