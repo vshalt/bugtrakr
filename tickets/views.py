@@ -94,17 +94,18 @@ def ticket_assign(request, id):
     except Ticket.DoesNotExist:
         raise Http404
     if request.method == 'POST':
-        form = TicketAssignForm(request=request, data=request.POST)
+        form = TicketAssignForm(
+            request=request, ticket=ticket, data=request.POST)
         if form.is_valid():
             cd = form.cleaned_data
             ticket.assigned_user = cd['assigned_user']
             ticket.save()
             user = cd['assigned_user']
-            send_ticket_assign_email(user, ticket)
+            send_ticket_assign_email(request, user, ticket)
             messages.success(request, 'Ticket assigned successfully')
             return redirect('tickets:list')
     else:
-        form = TicketAssignForm(request=request)
+        form = TicketAssignForm(request=request, ticket=ticket)
     return render(request, 'tickets/assign.html', {'form': form})
 
 

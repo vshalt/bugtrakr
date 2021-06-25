@@ -1,5 +1,9 @@
-Dear {{ assigned.user.username }},
-You have been assigned to the ticket '{{ ticket }}' of Project:'{{ ticket.project }}'
-Hope you respond to the ticket soon!
+Dear {{ ticket.assigned_user.user.username }},
+The ticket you were assigned to has been updated. Check the details below.
 
-Thank you
+Ticket: {{ ticket }}
+Project: {{ ticket.project }}
+Edited by: {{ profile.user.username }}
+Click on the link below to view the changes:
+
+{{ link }}

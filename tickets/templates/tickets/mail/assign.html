@@ -1,0 +1,13 @@
+{% with username=ticket.assigned_user.username %}
+Dear {{ username }},
+
+You have been assigned to a ticket, by the admin/managers. Hope you respond to the ticket soon.
+The detail of the ticket is given below:
+
+Ticket: {{ ticket }}
+Project: {{ ticket.project }}
+Assigned by: {{ request.user.username }}
+
+Click on the link below to view the ticket:
+{{ link }}
+{% endwith %}

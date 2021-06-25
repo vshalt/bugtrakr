@@ -9,8 +9,8 @@ from common.utils import send_ticket_update_email, get_user_roles
 
 class TicketCreateForm(forms.ModelForm):
     def __init__(self, project_id, request, *args, **kwargs):
-        super().__init__(*args, **kwargs)
         self.request = request
+        super().__init__(*args, **kwargs)
         self.profile = request.user.profile
         self.initial_title = self.instance.title
         self.initial_description = self.instance.description
@@ -83,12 +83,11 @@ class TicketCreateForm(forms.ModelForm):
                                 f"Status changed from '{self.initial_status}'"
                                 f"to '{self.instance.status}'"))
         if commit:
-            print(self.profile, instance, instance.assigned_user)
             if self.profile is not instance.assigned_user and \
                     instance.assigned_user is not None:
-                print('trying to send email')
-                send_ticket_update_email(
-                    self.profile, self.instance, instance.assigned_user)
+                link = self.request.build_absolute_uri(
+                    self.instance.get_absolute_url())
+                send_ticket_update_email(link, self.profile, self.instance)
             instance.save()
         return instance
 
@@ -99,10 +98,12 @@ class TicketCreateForm(forms.ModelForm):
 
 
 class TicketAssignForm(forms.Form):
-    def __init__(self, request, *args, **kwargs):
+    def __init__(self, request, ticket, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.request = request
-
+        self.ticket = ticket
+        if self.ticket.assigned_user:
+            self.fields['assigned_user'].initial = self.ticket.assigned_user.id
     queryset = Profile.objects.filter(roles__contains='developer')
     assigned_user = forms.ModelChoiceField(
         queryset=queryset, empty_label='Select a user')
