@@ -5,6 +5,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.conf import settings
 from common.decorators import is_admin_or_manager
+from common.utils import send_comment_create_email
 from .models import Comment
 from tickets.models import Ticket
 from .forms import CommentCreateForm
@@ -56,6 +57,7 @@ def comment_create(request):
             comment.ticket = ticket
             comment.user = request.user.profile
             comment.save()
+            send_comment_create_email(request, comment, ticket)
             messages.success(request, 'Comment created successfully')
             return redirect('tickets:detail', id=tid)
     else:

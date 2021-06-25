@@ -1,4 +1,4 @@
-{% with username=ticket.assigned_user.username %}
+{% with username=ticket.assigned_user.user.username %}
 Dear {{ username }},
 
 You have been assigned to a ticket, by the admin/managers. Hope you respond to the ticket soon.
