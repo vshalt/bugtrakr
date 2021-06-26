@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Demo{% endblock title %}
+{% block content %}
+<h1>Select an account</h1>
+    <a href="{% url 'demo' %}?acc=submitter"><button>Submitter</button></a>
+    <a href="{% url 'demo' %}?acc=developer"><button>Developer</button></a>
+    <a href="{% url 'demo' %}?acc=manager"><button>Manager</button></a>
+    <a href="{% url 'demo' %}?acc=admin"><button>Admin</button></a>
+{% endblock content %}

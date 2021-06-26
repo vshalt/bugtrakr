@@ -78,6 +78,7 @@ def user_logout(request):
     return redirect('dashboard')
 
 
+@login_required
 def dashboard(request):
     return render(request, 'accounts/dashboard.html')
 
@@ -118,6 +119,37 @@ def user_role(request, id):
         form = EditRolesForm(instance=user.profile)
     return render(request, 'accounts/roles.html',
                   {'form': form, 'roles': roles})
+
+
+def demo(request):
+    account = request.GET.get('acc')
+    user = None
+    if account == 'submitter':
+        user = authenticate(
+            settings.SUBMITTER_EMAIL, settings.SUBMITTER_PASSWORD)
+    if account == 'developer':
+        user = authenticate(
+            settings.DEVELOPER_EMAIL, settings.DEVELOPER_PASSWORD)
+    if account == 'manager':
+        user = authenticate(settings.MANAGER_EMAIL, settings.MANAGER_PASSWORD)
+    if account == 'admin':
+        user = authenticate(settings.ADMIN_EMAIL, settings.ADMIN_PASSWORD)
+    if user:
+        login(request, user)
+        return redirect('dashboard')
+    return render(request, 'accounts/demo.html')
+
+
+def home(request):
+    return render(request, 'accounts/home.html')
+
+
+@login_required
+def apply_manager(request):
+    request.user.profile.roles = 'submitter', 'developer', 'manager'
+    request.user.profile.save()
+    messages.success(request, 'You are now a project manager')
+    return redirect('dashboard')
 
 
 def error_404(request, exception=None):

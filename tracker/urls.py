@@ -19,7 +19,8 @@ from django.conf.urls import handler404, handler403, handler500
 from accounts import views as account_views
 
 urlpatterns = [
-    path('', account_views.dashboard, name='dashboard'),
+    path('', account_views.home, name='home'),
+    path('dashboard/', account_views.dashboard, name='dashboard'),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('projects/', include('projects.urls', namespace='projects')),

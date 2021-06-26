@@ -6,7 +6,7 @@ from django.http import Http404
 from django.contrib import messages
 
 from accounts.models import Profile
-from common.decorators import is_admin_or_manager
+from common.decorators import is_admin_or_manager, is_admin
 from common.utils import get_user_roles
 from tickets.models import Ticket
 from .forms import ProjectForm, AddUserForm, RemoveUserForm
@@ -96,7 +96,7 @@ def archived_projects(request):
 
 
 @login_required
-@is_admin_or_manager
+@is_admin
 def archive_project(request, id):
     try:
         project = Project.objects.get(pk=id)

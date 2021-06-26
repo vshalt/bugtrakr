@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
     # Registration and logins
+    path('demo/', views.demo, name='demo'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     path('register/', views.user_register, name='register'),
@@ -12,6 +13,7 @@ urlpatterns = [
     path('list/', views.user_list, name='user_list'),
     path('detail/<int:id>/', views.user_detail, name='user_detail'),
     path('role/<int:id>/', views.user_role, name='user_role'),
+    path('apply/', views.apply_manager, name='apply'),
 
     # Change and reset password
     path('change/', auth_views.PasswordChangeView.as_view(),
