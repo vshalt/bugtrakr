@@ -1,24 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}Archived{% endblock title %}
 {% block content %}
-{% for project in projects %}
-    <div>
-    <a href="{{ project.get_absolute_url }}">
-        <h3>{{ project.title }}</h3>
-        <small>Created on {{ project.created }}</small>
-        {{ project.description|linebreaks|truncatewords:30 }}
-    </a>
-    {% if 'admin' in roles or 'manager' in roles or request.user.superuser %}
-        <form method='POST' action='{% url "projects:archive" id=project.id %}'>
-            {% csrf_token %}
-            <input type="submit" value="{% if project.archived %}Unarchive{% else %}Archive{% endif %}">
-        </form>
-        <a href="{% url 'projects:edit' id=project.id %}"><button>Edit</button></a>
-    {% endif %}
-    {% if not forloop.lastloop %}
-        <hr>
-    {% endif %}
-    </div>
-{% endfor %}
+<div class="container-fluid mt-3 text-white">
+    <h2>Archived projects</h2>
+    {% include 'projects.html' %}
 {% include 'pagination.html' with page=projects %}
+</div>
 {% endblock content %}

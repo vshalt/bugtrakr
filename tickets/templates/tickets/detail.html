@@ -1,37 +1,28 @@
 {% extends 'base.html' %}
 {% block title %}Ticket detail{% endblock title %}
 {% block content %}
-<h1>{{ ticket.title }}</h1>
+<div class="container-fluid text-white mt-3">
+<h2>{{ ticket.title }}</h2>
 <small>Last updated: {{ ticket.last_modified }}, created: {{ ticket.created }}</small>
-<p>Opened by <a href="{{ ticket.owner.get_absolute_url }}">{{ ticket.owner }}</a></p>
+<p>Opened by <a class="text-white" href="{{ ticket.owner.get_absolute_url }}">{{ ticket.owner }}</a></p>
 {% if ticket.assigned_user %}
-<p>Assigned to <a href="{{ ticket.assigned_user.get_absolute_url }}">{{ ticket.assigned_user }}</a></p>
+<p>Assigned to <a class="text-white" href="{{ ticket.assigned_user.get_absolute_url }}">{{ ticket.assigned_user }}</a></p>
 {% endif %}
 <p>Priority: {{ ticket.priority }}</p>
 <p>Status: {{ ticket.status }}</p>
 <p>Classification: {{ ticket.classification }}</p>
 <hr>
 {{ ticket.description|linebreaks }}
-<a href="{% url 'comments:create' %}?tid={{ ticket.id }}">Comment</a>
-<h2>Comments</h2>
-{% for comment in comments %}
-<div>
-    Comment by <a href="{{ comment.user.get_absolute_url }}">{{ comment.user }}</a>
-    {{ comment.body|linebreaks }}
-    {% if 'admin' in roles or 'manager' in roles or request.user.is_superuser %}
-    <form method='POST' action="{% url 'comments:archive' id=comment.id %}?tid={{ ticket.id }}">
-        {% csrf_token %}
-        <input type="submit" value="{% if comment.archived is True %}Unarchive{% else %}Archive{% endif %}">
-    </form>
-    {% endif %}
-    {% if request.user.profile == comment.user %}
-    <a href="{% url 'comments:edit' id=comment.id %}?tid={{ ticket.id }}">Edit comment</a>
-    {% endif %}
-    {% if not forloop.lastloop %}
-        <hr>
-    {% endif %}
+{% if request.user.profile.id == ticket.owner.id %}
+<a href="{% url 'tickets:edit' id=ticket.id %}"><button class="btn btn-warning text-white">Edit</button></a>
+{% endif %}
+<a href="{% url 'tickets:history' id=ticket.id %}"><button class="btn btn-primary">History</button></a>
+<a href="{% url 'comments:create' %}?tid={{ ticket.id }}"><button class="btn btn-success">Comment</button></a>
+{% if comments %}
+<h3 class="mt-5">Comments</h3>
+<div class="text-dark">
+{% include 'comments.html' %}
 </div>
-{% empty %}
-No comments yet
-{% endfor %}
+{% endif %}
+</div>
 {% endblock content %}

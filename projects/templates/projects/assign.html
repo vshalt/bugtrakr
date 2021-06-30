@@ -1,18 +1,42 @@
 {% extends 'base.html' %}
 {% block title %}Assign users{% endblock title %}
 {% block content %}
-<h1>Assign users</h1>
-<h3>Assigned users</h3>
+<div class="container text-white mt-3">
+<h1>Assign users to project '{{ project }}'</h1>
+<div class="d-flex text-center flex-column flex-md-row justify-content-around">
+<div class="my-4">
 <form method='POST'>
+<h3>Assigned users</h3>
     {% csrf_token %}
-    {{ add_form.as_p }}
-    <input type="submit" value="Remove users">
-</form>
 
+{% for field in add_form %}
+<div class="mb-3">
+    <div class="p-3 rounded">
+        {{ field }}
+    </div>
+</div>
+{% endfor %}
+
+    <input class="btn btn-danger" type="submit" value="Remove users">
+</form>
+</div>
+
+<div class="my-4">
 <h3>All users</h3>
 <form method='POST'>
     {% csrf_token %}
-    {{ remove_form.as_p }}
-    <input type="submit" value="Assign users">
+
+{% for field in remove_form %}
+<div class="mb-3">
+    <div class="p-3 rounded">
+        {{ field }}
+    </div>
+</div>
+{% endfor %}
+
+    <input class="btn btn-success" type="submit" value="Assign users">
 </form>
+</div>
+</div>
+</div>
 {% endblock content %}

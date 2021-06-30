@@ -1,36 +1,26 @@
 {% extends 'base.html' %}
 {% block title %}Detail{% endblock title %}
 {% block content %}
-<div>
+<div class="container text-white mt-3">
 <h1>{{ project.title }}</h1>
 <small>Created on {{ project.created }}</small>
 {{ project.description|linebreaks }}
+<br>
+Members: {% for user in project.users.all %}<a class="text-white" href="{{ user.get_absolute_url }}">{{ user }}</a>{% if not forloop.lastloop %}, {% endif %}{% endfor %}
 <hr>
     {% if 'admin' in roles or 'manager' in roles or request.user.is_superuser %}
-        <form method='POST' action='{% url "projects:archive" id=project.id %}'>
-            {% csrf_token %}
-            <input type="submit" value="{% if project.archived %}Unarchive{% else %}Archive{% endif %}">
-        </form>
-        <a href="{% url 'projects:edit' id=project.id %}"><button>Edit</button></a>
+    <button class="btn btn-warning"><a class="text-white text-decoration-none" href="{% url 'projects:edit' id=project.id %}">Edit</a></button>
+    <button class="btn btn-primary"><a class="text-white text-decoration-none" href="{% url 'projects:assign' id=project.id %}">Assign</a></button>
+    {% endif %}
+    <button class="btn btn-success"><a class="text-white text-decoration-none" href="{% url 'tickets:create' %}?pid={{ project.id }}">New ticket</a></button>
+    {% if 'admin' in roles or request.user.is_superuser %}
+    <form class="d-inline" method='POST' action='{% url "projects:archive" id=project.id %}'>
+        {% csrf_token %}
+        <input class="btn btn-{% if project.archived %}success{% else %}danger{% endif %}" type="submit" value="{% if project.archived %}Unarchive{% else %}Archive{% endif %}">
+    </form>
     {% endif %}
 
-<h2>Tickets</h2>
-{% for ticket in tickets %}
-<div>
-    <a href="{{ ticket.get_absolute_url }}"><h3>{{ ticket.title }}</h3></a>
-    <small>Last updated: {{ ticket.last_modified }}, created: {{ ticket.created }}</small>
-    {{ ticket.description|linebreaks|truncatewords:30 }}
-    <a href="{% url 'tickets:edit' id=ticket.id %}"><button>Edit</button></a>
-    <a href="{% url 'tickets:assign' id=ticket.id %}"><button>Assign</button></a>
-    <a href="{% url 'tickets:history' id=ticket.id %}"><button>History</button></a>
-    <a href="{% url 'comments:create' %}?tid={{ ticket.id }}"><button>Comment</button></a>
-    {{ ticket.comments.count }} Comment{{ ticket.comments.count|pluralize }}
-</div>
-{% if forloop.lastloop %}
-<hr>
-{% endif %}
-{% empty %}
-No tickets yet
-{% endfor %}
+<h2 class="mt-5">Tickets</h2>
+{% include 'tickets.html' %}
 </div>
 {% endblock content %}

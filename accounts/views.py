@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render, redirect
 from .models import Profile, User
@@ -10,6 +11,8 @@ from .forms import (
     RegisterForm, LoginForm, UserEditForm, ProfileEditForm, EditRolesForm)
 from common.decorators import is_admin, is_admin_or_manager
 from common.utils import get_user_roles
+from projects.models import Project
+from tickets.models import Ticket
 
 
 def user_list(request):
@@ -34,7 +37,12 @@ def user_detail(request, id):
         user = User.objects.get(pk=id)
     except User.DoesNotExist:
         raise Http404
-    return render(request, 'accounts/detail.html', {'user': user})
+    projects = Project.objects.filter(users__id=user.id)
+    tickets = Ticket.objects.filter(
+        Q(owner__id=user.profile.id) | Q(assigned_user__id=user.profile.id))
+    return render(
+        request, 'accounts/detail.html',
+        {'user': user, 'tickets': tickets, 'projects': projects})
 
 
 def user_register(request):
@@ -80,7 +88,17 @@ def user_logout(request):
 
 @login_required
 def dashboard(request):
-    return render(request, 'accounts/dashboard.html')
+    user, roles = get_user_roles(request)
+    if 'admin' in roles or user.is_superuser:
+        projects = Project.objects.filter(archived=False)
+        tickets = Ticket.objects.all()
+    else:
+        projects = Project.objects.filter(
+            users__id=user.profile.id, archived=False)
+        tickets = Ticket.objects.filter(
+            Q(owner__id=user.profile.id) | Q(assigned_user__id=user.profile.id))
+    return render(request, 'accounts/dashboard.html',
+                  {'projects': projects, 'tickets': tickets})
 
 
 @login_required
@@ -98,7 +116,7 @@ def user_edit(request):
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(instance=request.user.profile)
     return render(request, 'accounts/edit.html',
-                  {'user_form': user_form, 'profile_form': profile_form})
+                  {'form': [user_form, profile_form]})
 
 
 @login_required

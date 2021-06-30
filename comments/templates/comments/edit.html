@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}Create comment{% endblock title %}
 {% block content %}
-<h1>Edit a comment</h1>
+<div class="container mt-3 text-white">
+<h2>Edit a comment</h2>
 <form method='POST'>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Edit">
+    {% include 'forms.html' with forms=form %}
+    <input class="btn btn-primary" type="submit" value="Edit">
 </form>
+</div>
 {% endblock content %}

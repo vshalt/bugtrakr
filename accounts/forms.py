@@ -22,14 +22,16 @@ class RegisterForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=80)
-    password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(label='Username or email', max_length=80)
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
 
 class UserEditForm(forms.ModelForm):
     class Meta():
         model = User
         fields = ('username', 'email', 'first_name', 'last_name')
+        labels = {'username': 'Username', 'email': 'Email',
+                  'first_name': 'First name', 'last_name': 'Last name'}
 
 
 class ProfileEditForm(forms.ModelForm):

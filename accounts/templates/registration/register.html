@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}{% endblock title %}
+{% block title %}Register{% endblock title %}
 {% block content %}
+<div class="container mt-3 text-white form-small-center">
 <h1>Register an account</h1>
 <form method='POST'>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Register">
+    {% include 'forms.html' with forms=form %}
+    <input  class="btn btn-primary" type="submit" value="Register">
 </form>
-<small><a href="{% url 'login' %}">Already have an account?</a></small>
+<small><a class="mt-2 text-white" href="{% url 'login' %}">Already have an account?</a></small>
+</div>
 {% endblock content %}

@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 {% block title %}Ticket history{% endblock title %}
 {% block content %}
-<h1>History of ticket: '{{ ticket }}'</h1>
+<div class="container mt-3">
+<h2 class="text-white">History of ticket: '{{ ticket }}'</h2>
 {% for tick in history %}
 <div>
-    <h3>{{ tick.message|linebreaks }}</h3>
-    <small>Updated on {{ tick.created }} by <a href="{{ tick.user.get_absolute_url }}">{{ tick.user }}</a></small>
+<div class="card">
+  <div class="card-body">
+    <p class="card-title">{{ tick.message|linebreaks }}</p>
+    <small class="car-text">Updated on {{ tick.created }} by <a class="text-decoration-underline" href="{{ tick.user.get_absolute_url }}">{{ tick.user }}</a></small>
+  </div>
+</div>
 </div>
 {% endfor %}
+</div>
 {% endblock content %}

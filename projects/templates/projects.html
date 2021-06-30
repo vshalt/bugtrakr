@@ -1,0 +1,32 @@
+<div class="d-flex row justify-content-start overflow">
+{% for project in projects %}
+    <div class="card p-3 m-4 shadow bg-body rounded" style="width: 20rem;">
+        <div class="card-body">
+        <a class="text-decoration-none text-dark" href="{{ project.get_absolute_url }}">
+        <h3 class="card-title">{{ project.title }}</h3>
+        <small>Created on {{ project.created }}</small>
+        <div class="card-text">{{ project.description|linebreaks|truncatewords:20 }}</div>
+        </a>
+        </div>
+    <div class="btn-group dropup">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ forloop.counter }}" data-bs-toggle="dropdown" aria-expanded="false">
+            Options
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton{{ forloop.counter }}">
+            {% if 'admin' in roles or 'manager' in roles or request.user.is_superuser %}
+            <li><a class="dropdown-item" href="{% url 'projects:edit' id=project.id %}">Edit</a></li>
+            <li><a class="dropdown-item" href="{% url 'projects:assign' id=project.id %}">Assign</a></li>
+            {% endif %}
+            <li><a class="dropdown-item" href="{% url 'projects:create' %}?pid={{ project.id }}">New ticket</a></li>
+            {% if 'admin' in roles or request.user.is_superuser %}
+            <li><hr class="dropdown-divider"></li>
+            <form class="dropdown-item" method='POST' action='{% url "projects:archive" id=project.id %}'>
+                {% csrf_token %}
+                <input class="btn btn-{% if project.archived %}success{% else %}danger{% endif %}" style="width: 100%" type="submit" value="{% if project.archived %}Unarchive{% else %}Archive{% endif %}">
+            </form>
+            {% endif %}
+        </ul>
+        </div>
+</div>
+{% endfor %}
+</div>

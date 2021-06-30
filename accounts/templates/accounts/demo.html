@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}Demo{% endblock title %}
 {% block content %}
-<h1>Select an account</h1>
-    <a href="{% url 'demo' %}?acc=submitter"><button>Submitter</button></a>
-    <a href="{% url 'demo' %}?acc=developer"><button>Developer</button></a>
-    <a href="{% url 'demo' %}?acc=manager"><button>Manager</button></a>
-    <a href="{% url 'demo' %}?acc=admin"><button>Admin</button></a>
+<div class="container">
+<h1 class="text-white ps-2">Select an account</h1>
+    <a href="{% url 'demo' %}?acc=submitter"><button class="btn btn-light"><i class="fas fa-user"></i> Submitter</button></a>
+    <a href="{% url 'demo' %}?acc=developer"><button class="btn btn-light"><i class="fas fa-user-friends"></i> Developer</button></a>
+    <a href="{% url 'demo' %}?acc=manager"><button class="btn btn-light"><i class="fas fa-users"></i> Manager</button></a>
+    <a href="{% url 'demo' %}?acc=admin"><button class="btn btn-light"><i class="fas fa-laptop-code"></i> Admin</button></a>
+</div>
 {% endblock content %}

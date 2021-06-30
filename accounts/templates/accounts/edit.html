@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 {% block title %}Edit profile{% endblock title %}
 {% block content %}
-<h1>Edit your profile</h1>
+<div class="container text-white">
+<div class='form-group form-small-center'>
+<h2>Edit your profile</h2>
 <form method='POST'>
-    {% csrf_token %}
-    {{ user_form.as_p }}
-    {{ profile_form.as_p }}
-    <input type="submit" value="Update">
+    {% include 'forms.html' with forms=form many=True %}
+    <input class="btn btn-primary" type="submit" value="Update">
 </form>
+</div>
+</div>
 {% endblock content %}

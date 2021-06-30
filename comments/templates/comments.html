@@ -1,0 +1,14 @@
+{% for comment in comments %}
+<div class="container card my-3 py-3">
+    <p>Comment by <a class="d-inline" href="{{ comment.user.get_absolute_url }}">{{ comment.user }}</a></p>
+    <hr>
+    {{ comment.body|linebreaks }}
+    <div>
+    <form class="d-inline" method='POST' action="{% url 'comments:archive' id=comment.id %}?tid={{ comment.ticket.pk }}">
+        {% csrf_token %}
+        <input class="btn {% if comment.archived %}btn-success{% else %}btn-danger{% endif %}" type="submit" value="{% if comment.archived is True %}Unarchive{% else %}Archive{% endif %}">
+    </form>
+    <a class="d-inline btn btn-warning" href="{% url 'comments:edit' id=comment.id %}">Edit</a>
+</div>
+</div>
+{% endfor %}

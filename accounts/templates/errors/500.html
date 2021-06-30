@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}Error 500{% endblock title %}
 {% block content %}
-<h1>Error 500: Internal Server Error</h1>
+<div class="container">
+<h1 class="text-white text-center my-3">Error 500: Internal Server Error</h1>
+<a class="d-block text-center" href="{% url 'dashboard' %}"><button class="btn btn-primary text-white">Go to dashboard</button></a>
+</div>
 {% endblock content %}

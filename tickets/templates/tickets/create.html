@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}Create ticket{% endblock title %}
 {% block content %}
-    <h1>Create a ticket</h1>
+<div class="container text-white mt-3">
+    <h2>Create a ticket</h2>
     <form method='POST'>
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Create ticket">
+        {% include 'forms.html' with forms=form %}
+        <input class="btn btn-primary" type="submit" value="Create ticket">
     </form>
+</div>
 {% endblock content %}

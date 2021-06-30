@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}Dashboard{% endblock title %}
 {% block content %}
-{% if request.user %}
-Hello {{ request.user }}
-{% endif %}
-Hello
+<div class="container-fluid">
+<h2 class="text-white ps-2 pt-2">Projects</h2>
+{% include 'projects.html' %}
+
+<h2 class="text-white ps-2 pt-2">Tickets</h2>
+{% include 'tickets.html' %}
+</div>
 {% endblock content %}

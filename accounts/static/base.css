@@ -1,7 +1,5 @@
 * {
     box-sizing:  border-box;
-    padding:  0;
-    margin:  0;
 }
 
 body {
@@ -9,6 +7,68 @@ body {
     color:  white;
 }
 
+
 a {
     color: #ddd;
+}
+
+.hover:hover {
+    background: #222 !important;
+    color:  white;
+}
+
+.overflow {
+    flex-wrap: nowrap !important;
+    overflow-x: scroll !important;
+    height: 400px;
+}
+
+.card-body a {
+    color: black !important;
+    text-decoration: none !important;
+
+}
+
+.pagination > li > a
+{
+    background-color: #212529;
+    color: white;
+}
+
+.pagination > li > a:focus,
+.pagination > li > a:hover,
+.pagination > li > span:focus,
+.pagination > li > span:hover
+{
+    color: #5a5a5a;
+    background-color: #eee;
+    border-color: #ddd;
+}
+
+.pagination > .active > a
+{
+    color: white;
+    background-color: #5A4181 !Important;
+    border: solid 1px #5A4181 !Important;
+}
+
+.pagination > .active > a:hover
+{
+    background-color: #5A4181 !Important;
+    border: solid 1px #5A4181;
+}
+
+select {
+    width: 200px;
+    padding: 10px;
+}
+.card {
+    background-color:#ced6e0 !important;
+}
+
+@media(max-width: 768px){
+    .form-small-center {
+        width: 60% !important;
+        margin: auto !important;
+    }
 }

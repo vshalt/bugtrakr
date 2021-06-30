@@ -2,12 +2,16 @@
 {% block title %}Login{% endblock title %}
 
 {% block content %}
+<div class="container form-group mt-3 form-small-center text-white">
 <h1>Login to continue</h1>
 <form method='POST'>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Login">
+    {% include 'forms.html' with forms=form %}
+    <input class="btn btn-primary" type="submit" value="Login">
 </form>
-<small><a href="{% url 'register' %}">Register</a></small>
-<small><a href="{% url 'password_reset' %}">Forgot password</a></small>
+<div class="mt-3">
+<small class="me-3"><a class="text-white" href="{% url 'register' %}">Register</a></small>
+<small class="mx-3"><a class="text-white" href="{% url 'demo' %}">Try demo</a></small>
+<small class="ms-3"><a class="text-white" href="{% url 'password_reset' %}">Forgot?</a></small>
+</div>
+</div>
 {% endblock content %}

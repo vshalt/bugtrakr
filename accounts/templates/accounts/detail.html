@@ -1,8 +1,33 @@
 {% extends 'base.html' %}
 {% block title %}User detail{% endblock title %}
 {% block content %}
-    <div>
-        {{ user.username }}
-        {{ user.email }}
+<div class="container pt-3">
+    <div class='card'>
+        <div class="card-title"><h2 class='text-center'>{{ user.username }}'s details</h2></div>
+        <div class="card-body">
+        <h4>Username: {{ user.username }}</h4>
+        <h4>Email: {{ user.email }}</h4>
+        {% if user.get_full_name %}
+        <h4>Name: {{ user.get_full_name }}</h4>
+        {% endif %}
+        {% if user.profile.github %}
+        <h4>Github: {{ user.profile.github }}</h4>
+        {% endif %}
+        <h4>Roles: {{ user.profile.roles }}</h4>
+        </div>
     </div>
+    {% if projects %}
+    <div class="my-5">
+    <h3 class="text-white">{{ user.username }}'s projects</h3>
+    {% include 'projects.html' %}
+    </div>
+    {% endif %}
+
+    {% if tickets %}
+    <div class="my-5">
+    <h3 class="text-white">{{ user.username }}'s tickets</h3>
+    {% include 'tickets.html' %}
+    </div>
+    {% endif %}
+</div>
 {% endblock content %}
