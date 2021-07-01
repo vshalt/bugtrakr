@@ -49,7 +49,9 @@ def user_register(request):
     if request.method == 'POST':
         form = RegisterForm(data=request.POST)
         if form.is_valid():
+            cd = form.cleaned_data
             user = form.save(commit=False)
+            user.set_password(cd['password1'])
             user.save()
             messages.success(request, 'Account created, login to continue')
             return redirect('login')
@@ -63,6 +65,7 @@ def user_login(request):
         form = LoginForm(data=request.POST)
         if form.is_valid():
             cd = form.cleaned_data
+            print(cd)
             user = authenticate(
                 request, username=cd['username'], password=cd['password'])
             if user is not None:
@@ -143,15 +146,17 @@ def demo(request):
     account = request.GET.get('acc')
     user = None
     if account == 'submitter':
-        user = authenticate(
-            settings.SUBMITTER_EMAIL, settings.SUBMITTER_PASSWORD)
+        user = authenticate(request, username=settings.SUBMITTER_EMAIL,
+                            password=settings.SUBMITTER_PASSWORD)
     if account == 'developer':
-        user = authenticate(
-            settings.DEVELOPER_EMAIL, settings.DEVELOPER_PASSWORD)
+        user = authenticate(request, username=settings.DEVELOPER_EMAIL,
+                            password=settings.DEVELOPER_PASSWORD)
     if account == 'manager':
-        user = authenticate(settings.MANAGER_EMAIL, settings.MANAGER_PASSWORD)
+        user = authenticate(request, username=settings.MANAGER_EMAIL,
+                            password=settings.MANAGER_PASSWORD)
     if account == 'admin':
-        user = authenticate(settings.ADMIN_EMAIL, settings.ADMIN_PASSWORD)
+        user = authenticate(request, username=settings.ADMIN_EMAIL,
+                            password=settings.ADMIN_PASSWORD)
     if user:
         login(request, user)
         return redirect('dashboard')

@@ -16,7 +16,7 @@
     <button class="btn btn-success"><a class="text-decoration-none text-white" href="{% url 'edit' %}"><i class="fas fa-edit"></i> Edit</a></button>
     {% endif %}
     {% if user.is_authenticated %}
-    {% if 'admin' in roles or request.user.is_superuser %}
+    {% if 'admin' in roles or request.user.is_superuser and request.user.email not in settings.DEMO_ACCOUNTS %}
     <button class="btn btn-secondary"><a class="text-decoration-none text-white" href="{% url 'user_role' id=user.id %}"><i class="fas fa-list-alt"></i> Edit role</a></button>
     {% endif %}
     {% endif %}

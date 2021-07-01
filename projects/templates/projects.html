@@ -1,6 +1,6 @@
 <div class="d-flex row justify-content-start overflow">
 {% for project in projects %}
-    <div class="card p-3 m-4 shadow bg-body rounded" style="width: 20rem;">
+    <div class="card p-3 m-4 shadow rounded" style="width: 20rem;">
         <div class="card-body">
         <a class="text-decoration-none text-dark" href="{{ project.get_absolute_url }}">
         <h3 class="card-title">{{ project.title }}</h3>
@@ -17,7 +17,7 @@
             <li><a class="dropdown-item" href="{% url 'projects:edit' id=project.id %}">Edit</a></li>
             <li><a class="dropdown-item" href="{% url 'projects:assign' id=project.id %}">Assign</a></li>
             {% endif %}
-            <li><a class="dropdown-item" href="{% url 'projects:create' %}?pid={{ project.id }}">New ticket</a></li>
+            <li><a class="dropdown-item" href="{% url 'tickets:create' %}?pid={{ project.id }}">New ticket</a></li>
             {% if 'admin' in roles or request.user.is_superuser %}
             <li><hr class="dropdown-divider"></li>
             <form class="dropdown-item" method='POST' action='{% url "projects:archive" id=project.id %}'>

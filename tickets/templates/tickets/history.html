@@ -5,7 +5,7 @@
 <h2 class="text-white">History of ticket: '{{ ticket }}'</h2>
 {% for tick in history %}
 <div>
-<div class="card">
+<div class="card mb-3">
   <div class="card-body">
     <p class="card-title">{{ tick.message|linebreaks }}</p>
     <small class="car-text">Updated on {{ tick.created }} by <a class="text-decoration-underline" href="{{ tick.user.get_absolute_url }}">{{ tick.user }}</a></small>

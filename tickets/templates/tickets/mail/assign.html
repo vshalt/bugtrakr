@@ -1,13 +1,13 @@
 {% with username=ticket.assigned_user.user.username %}
-Dear {{ username }},
+<p>Dear {{ username }},</p>
 
-You have been assigned to a ticket, by the admin/managers. Hope you respond to the ticket soon.
-The detail of the ticket is given below:
+<p>You have been assigned to a ticket, by the admin/managers. Hope you respond to the ticket soon.
+The detail of the ticket is given below:</p>
 
-Ticket: {{ ticket }}
-Project: {{ ticket.project }}
-Assigned by: {{ request.user.username }}
+<p>Ticket: {{ ticket }}</p>
+<p>Project: {{ ticket.project }}</p>
+<p>Assigned by: {{ request.user.username }}</p>
 
-Click on the link below to view the ticket:
+<p>Click on the link below to view the ticket:</p>
 {{ link }}
 {% endwith %}

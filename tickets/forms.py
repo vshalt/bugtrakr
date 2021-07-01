@@ -16,6 +16,7 @@ class TicketCreateForm(forms.ModelForm):
         self.initial_description = self.instance.description
         self.initial_classification = self.instance.classification
         self.initial_status = self.instance.status
+        self.initial_priority = self.instance.priority
         self.user, self.roles = get_user_roles(request)
         self.fields['project'].queryset = Project.objects.filter(
             users__id=request.user.profile.id)

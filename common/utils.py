@@ -7,6 +7,7 @@ from django.template import Context
 def get_user_roles(request):
     return request.user, [role for role in request.user.profile.roles]
 
+
 def send_email(subject, text_content, html_content, from_email, to):
     msg = EmailMultiAlternatives(subject=subject, body=text_content,
                                  from_email=from_email, to=to)
@@ -15,13 +16,13 @@ def send_email(subject, text_content, html_content, from_email, to):
 
 
 def send_ticket_update_email(link, profile, ticket):
-    if ticket.assigned.user.email in settings.DEMO_ACCOUNTS:
+    if ticket.assigned_user.user.email in settings.DEMO_ACCOUNTS:
         return
     txt = get_template('tickets/mail/update.txt')
     html = get_template('tickets/mail/update.html')
     d = {'link': link, 'profile': profile, 'ticket': ticket}
     subject = 'Ticket updated'
-    from_email = settings.EMAIL_USER
+    from_email = settings.EMAIL_HOST_USER
     to = ticket.assigned_user.user.email
     text_content = txt.render(d)
     html_content = html.render(d)
@@ -36,7 +37,7 @@ def send_ticket_assign_email(request, user, ticket):
     link = request.build_absolute_uri(ticket.get_absolute_url())
     d = {'request': request, 'link': link, 'user': user, 'ticket': ticket}
     subject = 'Ticket assigned'
-    from_email = settings.EMAIL_USER
+    from_email = settings.EMAIL_HOST_USER
     to = ticket.assigned_user.user.email
     text_content = txt.render(d)
     html_content = html.render(d)
@@ -52,7 +53,7 @@ def send_comment_create_email(request, comment, ticket):
         link = request.build_absolute_uri(ticket.get_absolute_url())
         d = {'link': link, 'ticket': ticket, 'comment': comment}
         subject = 'Comment posted'
-        from_email = settings.EMAIL_USER
+        from_email = settings.EMAIL_HOST_USER
         to = ticket.assigned_user.user.email
         text_content = txt.render(d)
         html_content = html.render(d)

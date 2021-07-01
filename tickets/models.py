@@ -18,15 +18,15 @@ class Ticket(models.Model):
         Profile, on_delete=models.PROTECT, related_name='owned', default=None,
         null=True)
     assigned_user = models.ForeignKey(
-        Profile, on_delete=models.PROTECT, default=None,null=True,
+        Profile, on_delete=models.PROTECT, default=None, null=True,
         related_name='assigned')
     title = models.CharField(max_length=80, null=False)
     description = models.TextField(blank=True)
     project = models.ForeignKey(
         Project, on_delete=models.PROTECT, related_name='tickets')
     priority = models.CharField(
-        max_length=40, null=False, default="", choices=PRIORITY)
-    status = models.CharField(max_length=40, choices=STATUS, default='New')
+        max_length=40, null=False, default="low", choices=PRIORITY)
+    status = models.CharField(max_length=40, choices=STATUS, default='new')
     classification = models.CharField(
         max_length=40, null=False, default="", choices=CLASSIFICATION)
     created = models.DateTimeField(auto_now_add=True)

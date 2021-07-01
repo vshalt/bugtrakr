@@ -2,10 +2,28 @@
 {% block title %}Dashboard{% endblock title %}
 {% block content %}
 <div class="container-fluid">
-<h2 class="text-white ps-2 pt-2">Projects</h2>
+{% if request.user.is_superuser or 'admin' in request.user.profile.roles %}
+<h2 class="text-white ps-2 pt-2">All projects</h2>
+{% else %}
+<h2 class="text-white ps-2 pt-2">Projects you're in</h2>
+{% endif %}
+{% if projects %}
 {% include 'projects.html' %}
+{% else %}
+<p class="mt-3 text-white">No projects assigned yet</p>
+<a href="{% url 'projects:list' %}"><button class="btn btn-primary">View all projects</button></a>
+{% endif %}
 
-<h2 class="text-white ps-2 pt-2">Tickets</h2>
+{% if request.user.is_superuser or 'admin' in request.user.profile.roles %}
+<h2 class="text-white ps-2 pt-2 mt-4">All tickets</h2>
+{% else %}
+<h2 class="text-white ps-2 pt-2 mt-4">Tickets you're assigned/ owner</h2>
+{% endif %}
+{% if tickets %}
 {% include 'tickets.html' %}
+{% else %}
+<p class="mt-3 text-white">No tickets assigned yet</p>
+<a href="{% url 'tickets:list' %}"><button class="btn btn-primary">View all tickets</button></a>
+{% endif %}
 </div>
 {% endblock content %}

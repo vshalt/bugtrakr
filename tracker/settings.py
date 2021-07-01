@@ -24,12 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4h0bvo*drrbr3rj)5rf=sg2#v0m#t-!05=i$9tq1&sgvtln2$m'
-
+SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'https://bugtrakr.herokuapp.com']
 
 
 # Application definition
@@ -141,8 +140,13 @@ PROJECTS_PER_PAGE = 10
 TICKETS_PER_PAGE = 10
 USERS_PER_PAGE = 20
 COMMENTS_PER_PAGE = 20
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_USER = 'user@email.com'
+
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS')
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = os.environ.get('EMAIL_PORT')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
 
 SUBMITTER_EMAIL = os.environ.get('SUBMITTER_EMAIL')
 SUBMITTER_PASSWORD = os.environ.get('SUBMITTER_PASSWORD')

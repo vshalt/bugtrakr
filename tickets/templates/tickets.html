@@ -1,11 +1,25 @@
 <div class="d-flex row justify-content-start overflow">
 {% for ticket in tickets %}
-    <div class="card p-3 m-4 shadow bg-body rounded" style="width: 20rem;">
+    <div class="card p-3 m-4 shadow rounded" style="width: 20rem;">
         <div class="card-body">
         <a  class="text-decoration-none text-dark" href="{{ ticket.get_absolute_url }}">
         <h3 class="card-title">{{ ticket.title }}</h3>
-        <small>Last updated: {{ ticket.last_modified }}, created: {{ ticket.created }}</small>
-        <div class="card-text">{{ ticket.description|linebreaks|truncatewords:30 }}</div>
+        <div class="card-text">
+          Project: {{ ticket.project }}<br>
+          Status: {{ ticket.status }}<br>
+          Classification: {{ ticket.classification }}<br>
+
+          {% if ticket.priority %}
+            Priority: <span class="p-1 {% if ticket.priority == 'low' %}bg-success{% elif ticket.priority == 'medium' %}bg-primary{% elif ticket.priority == 'high' %}bg-warning{% elif ticket.priority == 'critical' %}bg-danger{% endif %}">
+                    {{ ticket.priority }}
+                    </span><br>
+          {% endif %}
+
+          Owner: {{ ticket.owner }}<br>
+          {% if ticket.assigned_user %}Assigned: {{ ticket.assigned_user }}<br>{% endif %}
+          <hr>
+          Created: {{ ticket.created }}<br>
+        </div>
         </a>
         </div>
 
@@ -14,7 +28,7 @@
     Options
   </button>
   <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton{{ forloop.counter }}">
-    {% if 'admin' in roles or 'manager' in roles or request.user.is_superuser %}
+    {% if 'admin' in request.user.profile.roles or 'manager' in request.user.profile.roles or request.user.is_superuser %}
     <li><a class="dropdown-item" href="{% url 'tickets:edit' id=ticket.id %}">Edit</a></li>
     <li><a class="dropdown-item" href="{% url 'tickets:assign' id=ticket.id %}">Assign</a></li>
     {% endif %}

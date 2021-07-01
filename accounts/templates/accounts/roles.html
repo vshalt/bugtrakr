@@ -6,8 +6,9 @@
 <h2 class="text-white">Edit the user roles</h2>
 
 <form class="text-white" method="POST">
+    {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Confirm roles">
+    <input class="btn btn-success" type="submit" value="Confirm roles">
 </form>
 </div>
 </div>

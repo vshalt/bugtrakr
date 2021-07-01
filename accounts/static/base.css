@@ -20,7 +20,7 @@ a {
 .overflow {
     flex-wrap: nowrap !important;
     overflow-x: scroll !important;
-    height: 400px;
+    min-height: 400px;
 }
 
 .card-body a {
@@ -64,6 +64,10 @@ select {
 }
 .card {
     background-color:#ced6e0 !important;
+}
+
+.line-height p{
+    line-height: 80% !important;
 }
 
 @media(max-width: 768px){

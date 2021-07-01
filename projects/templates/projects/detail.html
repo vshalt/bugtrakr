@@ -8,6 +8,7 @@
 <br>
 Members: {% for user in project.users.all %}<a class="text-white" href="{{ user.get_absolute_url }}">{{ user }}</a>{% if not forloop.lastloop %}, {% endif %}{% endfor %}
 <hr>
+<div>
     {% if 'admin' in roles or 'manager' in roles or request.user.is_superuser %}
     <button class="btn btn-warning"><a class="text-white text-decoration-none" href="{% url 'projects:edit' id=project.id %}">Edit</a></button>
     <button class="btn btn-primary"><a class="text-white text-decoration-none" href="{% url 'projects:assign' id=project.id %}">Assign</a></button>
@@ -19,6 +20,7 @@ Members: {% for user in project.users.all %}<a class="text-white" href="{{ user.
         <input class="btn btn-{% if project.archived %}success{% else %}danger{% endif %}" type="submit" value="{% if project.archived %}Unarchive{% else %}Archive{% endif %}">
     </form>
     {% endif %}
+</div>
 
 <h2 class="mt-5">Tickets</h2>
 {% include 'tickets.html' %}
