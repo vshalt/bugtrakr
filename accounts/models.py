@@ -14,7 +14,9 @@ class Role(models.Model):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
+    )
     github = models.CharField(max_length=80, blank=True)
     roles = models.ManyToManyField(Role)
 

@@ -5,6 +5,18 @@ from django.conf import settings
 from django.db import migrations, models
 
 
+def load_initial_data(apps, schema_editor):
+    Role = apps.get_model("accounts", "Role")
+    data = [
+        {"id": 1, "role": "submitter"},
+        {"id": 2, "role": "developer"},
+        {"id": 3, "role": "manager"},
+        {"id": 4, "role": "admin"},
+    ]
+    for record in data:
+        Role.objects.create(**record)
+
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -52,4 +64,5 @@ class Migration(migrations.Migration):
                 ("roles", models.ManyToManyField(to="accounts.role")),
             ],
         ),
+        migrations.RunPython(load_initial_data),
     ]

@@ -2,9 +2,10 @@ from django import forms
 from django.http import Http404
 
 from accounts.models import Profile
+from common.utils import get_user_roles, send_ticket_update_email
 from projects.models import Project
+
 from .models import Ticket, TicketHistory
-from common.utils import send_ticket_update_email, get_user_roles
 
 
 class TicketCreateForm(forms.ModelForm):

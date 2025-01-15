@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -30,6 +31,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*", "https://bugtrakr.herokuapp.com"]
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication"
+    ],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+}
 
 # Application definition
 
@@ -44,6 +51,7 @@ INSTALLED_APPS = [
     "projects.apps.ProjectsConfig",
     "tickets.apps.TicketsConfig",
     "comments.apps.CommentsConfig",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [

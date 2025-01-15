@@ -1,8 +1,11 @@
 from functools import wraps
+
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
-from projects.models import Project, User
+from rest_framework.permissions import BasePermission
+
 from common.utils import get_user_roles
+from projects.models import Project, User
 
 
 def project_exists(f):
@@ -39,6 +42,12 @@ def is_manager(f):
         raise PermissionDenied
 
     return wrap
+
+
+class IsAdminUserRole(BasePermission):
+    def has_permission(self, request, view):
+        user, roles = get_user_roles(request)
+        return "admin" in roles or user.is_superuser
 
 
 def is_admin(f):

@@ -1,6 +1,7 @@
 from django.db import models
-from tickets.models import Ticket
+
 from accounts.models import Profile
+from tickets.models import Ticket
 
 
 class Comment(models.Model):

@@ -1,30 +1,27 @@
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Q, QuerySet
-from django.http import Http404
-from django.shortcuts import get_object_or_404, render, redirect
-from .models import Profile, User
-from .forms import RegisterForm, LoginForm, UserEditForm, ProfileEditForm, EditRolesForm
-from common.decorators import is_admin, is_admin_or_manager
-from common.utils import get_user_roles
-from projects.models import Project
-from tickets.models import Ticket
-
-from rest_framework import viewsets
+from django.shortcuts import get_object_or_404, redirect, render
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from django.contrib.auth import get_user_model
-from accounts.serializers import UserSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from common.decorators import IsAdminUserRole
+from serializers import (EditUserSerializer, LoginSerializer,
+                         RegisterUserSerializer, UpdateRoleSerializer,
+                         UserDetailSerializer, UserSerializer)
+
+from .models import Role, User
 
 
 class UserDetailViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.AllowAny]
 
     @action(detail=False, methods=["get"])
-    def me(self, request):
+    def users(self, request):
         paginator = PageNumberPagination()
         limit = request.query_params.get("limit", settings.USERS_PER_PAGE)
         paginator.page_size = limit
@@ -34,139 +31,74 @@ class UserDetailViewSet(viewsets.ViewSet):
         return paginator.get_paginated_response(serializer.data)
 
     @action(detail=True, methods=["get"])
-    def detail(self, request, pk=None):
+    def details(self, request, pk=None):
         user = get_object_or_404(User, pk=pk)
-        return UserSerializer(user)
+        return Response(UserDetailSerializer(user).data)
 
+    @action(detail=False, methods=["post"])
+    def register(self, request):
+        serializer = RegisterUserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            user.profile.roles.add(Role.objects.get(id=1))
+            return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def user_detail(request, id):
-    try:
-        user = User.objects.get(pk=id)
-    except User.DoesNotExist:
-        raise Http404
-    projects = Project.objects.filter(users__id=user.id)
-    tickets = Ticket.objects.filter(
-        Q(owner__id=user.profile.id) | Q(assigned_user__id=user.profile.id)
-    )
-    return render(
-        request,
-        "accounts/detail.html",
-        {"user": user, "tickets": tickets, "projects": projects},
-    )
-
-
-def user_list(request):
-    users = User.objects.all()
-    paginator = Paginator(users, settings.USERS_PER_PAGE)
-    page = request.GET.get("page")
-    try:
-        users = paginator.page(page)
-    except PageNotAnInteger:
-        users = paginator.page(1)
-    except EmptyPage:
-        users = paginator.page(paginator.num_pages)
-    roles = None
-    if request.user.is_authenticated:
-        user, roles = get_user_roles(request)
-    return render(request, "accounts/list.html", {"users": users, "roles": roles})
-
-
-def user_register(request):
-    if request.method == "POST":
-        form = RegisterForm(data=request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            user = form.save(commit=False)
-            user.set_password(cd["password1"])
-            user.save()
-            messages.success(request, "Account created, login to continue")
-            return redirect("login")
-    else:
-        form = RegisterForm()
-    return render(request, "registration/register.html", {"form": form})
-
-
-def user_login(request):
-    if request.method == "POST":
-        form = LoginForm(data=request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            print(cd)
-            user = authenticate(
-                request, username=cd["username"], password=cd["password"]
-            )
-            if user is not None:
+    @action(detail=False, methods=["post"])
+    def login(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data["username"]
+            password = serializer.validated_data["password"]
+            user = authenticate(request, username=username, password=password)
+            if user:
                 if user.is_active:
-                    login(request, user)
-                    messages.success(request, "Login successful")
+                    refresh = RefreshToken.for_user(user)
+                    return Response(
+                        {"refresh": str(refresh), "access": str(refresh.access_token)}
+                    )
                 else:
-                    messages.error(request, "Account disabled")
+                    return Response(
+                        {"error": "Account disabled"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
             else:
-                messages.error(request, "Invalid account")
-        return redirect("dashboard")
-    else:
-        form = LoginForm()
-    return render(request, "registration/login.html", {"form": form})
+                return Response(
+                    {"error": "Invalid credentials"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@login_required
-def user_logout(request):
-    logout(request)
-    messages.success(request, "Logged out")
-    return redirect("dashboard")
+class AuthenticatedUserViewSet(viewsets.ViewSet):
+    @action(detail=False, methods=["get"])
+    def dashboard(self, request):
+        user = request.user
+        return Response(UserDetailSerializer(user).data)
 
+    @action(detail=False, methods=["post"])
+    def edit(self, request):
+        user = request.user
+        serializer = EditUserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@login_required
-def dashboard(request):
-    user, roles = get_user_roles(request)
-    if "admin" in roles or user.is_superuser:
-        projects = Project.objects.filter(archived=False)
-        tickets = Ticket.objects.all()
-    else:
-        projects = Project.objects.filter(users__id=user.profile.id, archived=False)
-        tickets = Ticket.objects.filter(
-            Q(owner__id=user.profile.id) | Q(assigned_user__id=user.profile.id)
-        )
-    return render(
-        request, "accounts/dashboard.html", {"projects": projects, "tickets": tickets}
+    @action(
+        detail=False,
+        methods=["post"],
+        permission_classes=[permissions.IsAuthenticated, IsAdminUserRole],
     )
+    def update_role(self, request):
+        serializer = UpdateRoleSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@login_required
-def user_edit(request):
-    if request.method == "POST":
-        user_form = UserEditForm(data=request.POST, instance=request.user)
-        profile_form = ProfileEditForm(data=request.POST, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            messages.success(request, "Account updated")
-            return redirect("dashboard")
-    else:
-        user_form = UserEditForm(instance=request.user)
-        profile_form = ProfileEditForm(instance=request.user.profile)
-    return render(request, "accounts/edit.html", {"form": [user_form, profile_form]})
-
-
-@login_required
-@is_admin
-def user_role(request, id):
-    try:
-        user = User.objects.get(pk=id)
-    except User.DoesNotExist:
-        raise Http404
-    roles = [role for role in user.profile.roles]
-    if request.method == "POST":
-        form = EditRolesForm(data=request.POST, instance=user.profile)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Roles saved")
-            return redirect("user_list")
-    else:
-        form = EditRolesForm(instance=user.profile)
-    return render(request, "accounts/roles.html", {"form": form, "roles": roles})
-
-
+# TODO: demo accounts
 def demo(request):
     account = request.GET.get("acc")
     user = None

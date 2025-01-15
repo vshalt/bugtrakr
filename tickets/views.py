@@ -1,15 +1,17 @@
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import Http404
-from django.shortcuts import render, redirect
-from common.utils import get_user_roles, send_ticket_assign_email
-from common.decorators import is_admin_or_manager
-from projects.models import Project
+from django.shortcuts import redirect, render
+
 from comments.models import Comment
+from common.decorators import is_admin_or_manager
+from common.utils import get_user_roles, send_ticket_assign_email
+from projects.models import Project
+
+from .forms import TicketAssignForm, TicketCreateForm
 from .models import Ticket, TicketHistory
-from .forms import TicketCreateForm, TicketAssignForm
 
 
 @login_required

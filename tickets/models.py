@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+
 from accounts.models import Profile
 from projects.models import Project
 

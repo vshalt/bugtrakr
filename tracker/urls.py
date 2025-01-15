@@ -14,9 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf.urls import handler403, handler404, handler500
 from django.contrib import admin
-from django.urls import path, include
-from django.conf.urls import handler404, handler403, handler500
+from django.urls import include, path
+
 from accounts import views as account_views
 
 urlpatterns = [
@@ -27,6 +28,7 @@ urlpatterns = [
     path("projects/", include("projects.urls", namespace="projects")),
     path("tickets/", include("tickets.urls", namespace="tickets")),
     path("comments/", include("comments.urls", namespace="comments")),
+    path("api-auth/", include("rest_framework.urls")),
 ]
 
 handler403 = account_views.error_403

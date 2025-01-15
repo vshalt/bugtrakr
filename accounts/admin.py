@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Profile, Role
 
+from .models import Profile, Role
 
 admin.site.register(Profile)
 

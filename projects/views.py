@@ -1,15 +1,16 @@
-from django.shortcuts import render, redirect
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import Http404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import Http404
+from django.shortcuts import redirect, render
 
 from accounts.models import Profile
-from common.decorators import is_admin_or_manager, is_admin
+from common.decorators import is_admin, is_admin_or_manager
 from common.utils import get_user_roles
 from tickets.models import Ticket
-from .forms import ProjectForm, AddUserForm, RemoveUserForm
+
+from .forms import AddUserForm, ProjectForm, RemoveUserForm
 from .models import Project, User
 
 

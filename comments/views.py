@@ -1,14 +1,16 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.http import Http404
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib import messages
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import Http404
+from django.shortcuts import redirect, render
+
 from common.decorators import is_admin_or_manager
 from common.utils import send_comment_create_email
-from .models import Comment
 from tickets.models import Ticket
+
 from .forms import CommentCreateForm
+from .models import Comment
 
 
 @login_required
