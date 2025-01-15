@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Profile
+from .models import Profile, Role
 
 
-@admin.register(Profile)
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'github', 'roles')
+admin.site.register(Profile)
+
+admin.site.register(Role)
