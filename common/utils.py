@@ -5,7 +5,7 @@ from django.template import Context
 
 
 def get_user_roles(request):
-    return request.user, [role for role in request.user.profile.roles]
+    return request.user, [role.role for role in request.user.profile.roles.all()]
 
 
 def send_email(subject, text_content, html_content, from_email, to):
