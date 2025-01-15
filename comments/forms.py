@@ -5,7 +5,7 @@ from .models import Comment
 
 
 class CommentCreateForm(forms.ModelForm):
-    class Meta():
+    class Meta:
         model = Comment
-        fields = ('body',)
-        labels = {'body': 'Comment'}
+        fields = ("body",)
+        labels = {"body": "Comment"}

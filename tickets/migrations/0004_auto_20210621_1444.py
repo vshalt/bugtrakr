@@ -7,19 +7,31 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0001_initial'),
-        ('tickets', '0003_alter_ticket_owner'),
+        ("accounts", "0001_initial"),
+        ("tickets", "0003_alter_ticket_owner"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ticket',
-            name='assigned_users',
-            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='assigned', to='accounts.profile'),
+            model_name="ticket",
+            name="assigned_users",
+            field=models.ForeignKey(
+                default=None,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="assigned",
+                to="accounts.profile",
+            ),
         ),
         migrations.AlterField(
-            model_name='ticket',
-            name='owner',
-            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='owned', to='accounts.profile'),
+            model_name="ticket",
+            name="owner",
+            field=models.ForeignKey(
+                default=None,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="owned",
+                to="accounts.profile",
+            ),
         ),
     ]

@@ -15,6 +15,7 @@ def project_exists(f):
         if request.user not in project.users.all():
             raise PermissionDenied
         return f(request, id, *args, **kwargs)
+
     return wrap
 
 
@@ -22,9 +23,10 @@ def is_admin_or_manager(f):
     @wraps(f)
     def wrap(request, *args, **kwargs):
         user, roles = get_user_roles(request)
-        if 'admin' in roles or 'manager' in roles or user.is_superuser:
+        if "admin" in roles or "manager" in roles or user.is_superuser:
             return f(request, *args, **kwargs)
         raise PermissionDenied
+
     return wrap
 
 
@@ -32,9 +34,10 @@ def is_manager(f):
     @wraps(f)
     def wrap(request, *args, **kwargs):
         user, roles = get_user_roles(request)
-        if 'manager' in roles:
+        if "manager" in roles:
             return f(request, *args, **kwargs)
         raise PermissionDenied
+
     return wrap
 
 
@@ -42,7 +45,8 @@ def is_admin(f):
     @wraps(f)
     def wrap(request, *args, **kwargs):
         user, roles = get_user_roles(request)
-        if 'admin' in roles or user.is_superuser:
+        if "admin" in roles or user.is_superuser:
             return f(request, *args, **kwargs)
         raise PermissionDenied
+
     return wrap

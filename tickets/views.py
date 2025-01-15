@@ -15,24 +15,24 @@ from .forms import TicketCreateForm, TicketAssignForm
 @login_required
 def ticket_list(request):
     user, roles = get_user_roles(request)
-    if 'admin' in roles:
+    if "admin" in roles:
         tickets = Ticket.objects.all()
-    elif 'manager' in roles:
+    elif "manager" in roles:
         projects = Project.objects.filter(users__id=user.profile.id)
         tickets = Ticket.objects.filter(project__in=projects)
-    elif 'developer' in roles:
+    elif "developer" in roles:
         tickets = Ticket.objects.filter(assigned_users__id=user.profile.id)
     else:
         tickets = Ticket.objects.filter(owner__id=user.profile.id)
     paginator = Paginator(tickets, settings.TICKETS_PER_PAGE)
-    page = request.GET.get('page')
+    page = request.GET.get("page")
     try:
         tickets = paginator.page(page)
     except PageNotAnInteger:
         tickets = paginator.page(1)
     except EmptyPage:
         tickets = paginator.page(paginator.num_pages)
-    return render(request, 'tickets/list.html', {'tickets': tickets})
+    return render(request, "tickets/list.html", {"tickets": tickets})
 
 
 @login_required
@@ -42,48 +42,50 @@ def ticket_detail(request, id):
         ticket = Ticket.objects.get(pk=id)
     except Ticket.DoesNotExist:
         raise Http404
-    comments = Comment.objects.filter(
-        ticket=ticket, archived=False).order_by('-created')
-    return render(request, 'tickets/detail.html',
-                  {'ticket': ticket, 'comments': comments, 'roles': roles})
+    comments = Comment.objects.filter(ticket=ticket, archived=False).order_by(
+        "-created"
+    )
+    return render(
+        request,
+        "tickets/detail.html",
+        {"ticket": ticket, "comments": comments, "roles": roles},
+    )
 
 
 @login_required
 def ticket_create(request):
-    pid = request.GET.get('pid')
-    if request.method == 'POST':
-        form = TicketCreateForm(
-            project_id=pid, request=request, data=request.POST)
+    pid = request.GET.get("pid")
+    if request.method == "POST":
+        form = TicketCreateForm(project_id=pid, request=request, data=request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Ticket created successfully')
+            messages.success(request, "Ticket created successfully")
             cd = form.cleaned_data
-            return redirect('projects:detail', id=cd['project'].id)
+            return redirect("projects:detail", id=cd["project"].id)
     else:
         form = TicketCreateForm(project_id=pid, request=request)
-    return render(request, 'tickets/create.html', {'form': form})
+    return render(request, "tickets/create.html", {"form": form})
 
 
 @login_required
 def ticket_edit(request, id):
-    pid = request.GET.get('pid')
+    pid = request.GET.get("pid")
     try:
         ticket = Ticket.objects.get(pk=id)
     except Ticket.DoesNotExist:
         raise Http404
-    if request.method == 'POST':
+    if request.method == "POST":
         form = TicketCreateForm(
-            project_id=pid, request=request, data=request.POST,
-            instance=ticket)
+            project_id=pid, request=request, data=request.POST, instance=ticket
+        )
         if form.is_valid():
             form.save()
-            messages.success(request, 'Ticket updated successfully')
+            messages.success(request, "Ticket updated successfully")
             cd = form.cleaned_data
-            return redirect('projects:detail', id=cd['project'].id)
+            return redirect("projects:detail", id=cd["project"].id)
     else:
-        form = TicketCreateForm(
-            project_id=pid, request=request, instance=ticket)
-    return render(request, 'tickets/edit.html', {'form': form})
+        form = TicketCreateForm(project_id=pid, request=request, instance=ticket)
+    return render(request, "tickets/edit.html", {"form": form})
 
 
 @login_required
@@ -93,20 +95,19 @@ def ticket_assign(request, id):
         ticket = Ticket.objects.get(pk=id)
     except Ticket.DoesNotExist:
         raise Http404
-    if request.method == 'POST':
-        form = TicketAssignForm(
-            request=request, ticket=ticket, data=request.POST)
+    if request.method == "POST":
+        form = TicketAssignForm(request=request, ticket=ticket, data=request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            ticket.assigned_user = cd['assigned_user']
+            ticket.assigned_user = cd["assigned_user"]
             ticket.save()
-            user = cd['assigned_user']
+            user = cd["assigned_user"]
             send_ticket_assign_email(request, user, ticket)
-            messages.success(request, 'Ticket assigned successfully')
-            return redirect('tickets:list')
+            messages.success(request, "Ticket assigned successfully")
+            return redirect("tickets:list")
     else:
         form = TicketAssignForm(request=request, ticket=ticket)
-    return render(request, 'tickets/assign.html', {'form': form})
+    return render(request, "tickets/assign.html", {"form": form})
 
 
 @login_required
@@ -115,6 +116,7 @@ def ticket_history(request, id):
         ticket = Ticket.objects.get(pk=id)
     except Ticket.DoesNotExist:
         raise Http404
-    history = TicketHistory.objects.filter(ticket=ticket).order_by('-created')
-    return render(request, 'tickets/history.html',
-                  {'history': history, 'ticket': ticket})
+    history = TicketHistory.objects.filter(ticket=ticket).order_by("-created")
+    return render(
+        request, "tickets/history.html", {"history": history, "ticket": ticket}
+    )

@@ -5,15 +5,16 @@ from django.urls import reverse
 
 User = get_user_model()
 
+
 class Role(models.Model):
     role = models.CharField(max_length=50)
 
     def __str__(self):
         return f"{self.role}"
 
+
 class Profile(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     github = models.CharField(max_length=80, blank=True)
     roles = models.ManyToManyField(Role)
 
@@ -21,5 +22,4 @@ class Profile(models.Model):
         return self.user.__str__()
 
     def get_absolute_url(self):
-        return reverse('user_detail', args=[self.id])
-
+        return reverse("user_detail", args=[self.id])

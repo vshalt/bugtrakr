@@ -9,23 +9,46 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('tickets', '0005_rename_assigned_users_ticket_assigned_user'),
-        ('accounts', '0001_initial'),
+        ("tickets", "0005_rename_assigned_users_ticket_assigned_user"),
+        ("accounts", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Comment',
+            name="Comment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('body', models.TextField()),
-                ('archived', models.BooleanField(default=False)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('ticket', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='tickets.ticket')),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='comments', to='accounts.profile')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("body", models.TextField()),
+                ("archived", models.BooleanField(default=False)),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                (
+                    "ticket",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="comments",
+                        to="tickets.ticket",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="comments",
+                        to="accounts.profile",
+                    ),
+                ),
             ],
             options={
-                'ordering': ('-created',),
+                "ordering": ("-created",),
             },
         ),
     ]

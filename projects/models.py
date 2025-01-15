@@ -13,11 +13,11 @@ class Project(models.Model):
     archived = models.BooleanField(default=False)
     users = models.ManyToManyField(Profile)
 
-    class Meta():
-        ordering = ('title',)
+    class Meta:
+        ordering = ("title",)
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('projects:detail', args=[self.id])
+        return reverse("projects:detail", args=[self.id])

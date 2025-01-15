@@ -16,20 +16,21 @@ from .models import Project, User
 @login_required
 def project_list(request):
     user, roles = get_user_roles(request)
-    if 'admin' in roles:
+    if "admin" in roles:
         projects = Project.objects.filter(archived=False)
     else:
         projects = Project.objects.filter(
-            users__id=request.user.profile.id, archived=False)
+            users__id=request.user.profile.id, archived=False
+        )
     paginator = Paginator(projects, settings.PROJECTS_PER_PAGE)
-    page = request.GET.get('page')
+    page = request.GET.get("page")
     try:
         projects = paginator.page(page)
     except PageNotAnInteger:
         projects = paginator.page(1)
     except EmptyPage:
         projects = paginator.page(paginator.num_pages)
-    return render(request, 'projects/list.html', {'projects': projects})
+    return render(request, "projects/list.html", {"projects": projects})
 
 
 @login_required
@@ -40,24 +41,27 @@ def project_detail(request, id):
         raise Http404
     user, roles = get_user_roles(request)
     tickets = Ticket.objects.filter(project=project)
-    return render(request, 'projects/detail.html',
-                  {'project': project, 'roles': roles, 'tickets': tickets})
+    return render(
+        request,
+        "projects/detail.html",
+        {"project": project, "roles": roles, "tickets": tickets},
+    )
 
 
 @login_required
 @is_admin_or_manager
 def project_create(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ProjectForm(data=request.POST)
         if form.is_valid():
             project = form.save()
             project.users.add(request.user.profile)
             project.save()
-            messages.success(request, 'Project created successfully')
-            return redirect('projects:detail', id=project.id)
+            messages.success(request, "Project created successfully")
+            return redirect("projects:detail", id=project.id)
     else:
         form = ProjectForm()
-    return render(request, 'projects/create.html', {'form': form})
+    return render(request, "projects/create.html", {"form": form})
 
 
 @login_required
@@ -67,15 +71,15 @@ def edit_project(request, id):
         project = Project.objects.get(pk=id)
     except Project.DoesNotExist:
         raise Http404
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ProjectForm(data=request.POST, instance=project)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Project updated successfully')
-            return redirect('projects:detail', id=project.id)
+            messages.success(request, "Project updated successfully")
+            return redirect("projects:detail", id=project.id)
     else:
         form = ProjectForm(instance=project)
-    return render(request, 'projects/edit.html', {'form': form})
+    return render(request, "projects/edit.html", {"form": form})
 
 
 @login_required
@@ -84,15 +88,16 @@ def archived_projects(request):
     user, roles = get_user_roles(request)
     projects = Project.objects.filter(archived=True)
     paginator = Paginator(projects, settings.PROJECTS_PER_PAGE)
-    page = request.GET.get('page')
+    page = request.GET.get("page")
     try:
         projects = paginator.page(page)
     except PageNotAnInteger:
         projects = paginator.page(1)
     except EmptyPage:
         projects = paginator.page(paginator.num_pages)
-    return render(request, 'projects/archived.html',
-                  {'projects': projects, 'roles': roles})
+    return render(
+        request, "projects/archived.html", {"projects": projects, "roles": roles}
+    )
 
 
 @login_required
@@ -102,14 +107,14 @@ def archive_project(request, id):
         project = Project.objects.get(pk=id)
     except Project.DoesNotExist:
         raise Http404
-    if request.method == 'POST':
+    if request.method == "POST":
         if project.archived is False:
             project.archived = True
         else:
             project.archived = False
         project.save()
-        messages.success(request, 'Project archived')
-    return redirect('projects:list')
+        messages.success(request, "Project archived")
+    return redirect("projects:list")
 
 
 @login_required
@@ -121,26 +126,28 @@ def assign_users(request, id):
         raise Http404
     project_users = project.users.all()
     all_users = User.objects.exclude(id__in=project_users)
-    if request.method == 'POST':
+    if request.method == "POST":
         add_form = AddUserForm(project_users, data=request.POST)
         remove_form = RemoveUserForm(all_users, data=request.POST)
-        if request.POST.get('assigned'):
-            selected = request.POST.getlist('assigned')
+        if request.POST.get("assigned"):
+            selected = request.POST.getlist("assigned")
             to_remove = Profile.objects.filter(id__in=selected)
             if remove_form.is_valid():
                 for user in to_remove:
                     project.users.remove(user)
-                    messages.success(request, 'Users removed successfully')
-        if request.POST.get('all_users'):
-            selected = request.POST.get('all_users')
-            to_add = request.POST.getlist('all_users')
+                    messages.success(request, "Users removed successfully")
+        if request.POST.get("all_users"):
+            selected = request.POST.get("all_users")
+            to_add = request.POST.getlist("all_users")
             if add_form.is_valid():
                 for user in to_add:
                     project.users.add(user)
-                    messages.success(request, 'Users added successfully')
+                    messages.success(request, "Users added successfully")
     else:
         add_form = AddUserForm(project_users)
         remove_form = RemoveUserForm(all_users)
     return render(
-        request, 'projects/assign.html',
-        {'add_form': add_form, 'remove_form': remove_form, 'project': project})
+        request,
+        "projects/assign.html",
+        {"add_form": add_form, "remove_form": remove_form, "project": project},
+    )

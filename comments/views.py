@@ -16,41 +16,41 @@ from .forms import CommentCreateForm
 def comment_list(request):
     comments = Comment.objects.all()
     paginator = Paginator(comments, settings.COMMENTS_PER_PAGE)
-    page = request.GET.get('page')
+    page = request.GET.get("page")
     try:
         comments = paginator.page(page)
     except PageNotAnInteger:
         comments = paginator.page(1)
     except EmptyPage:
         comments = paginator.page(paginator.num_pages)
-    return render(request, 'comments/list.html', {'comments': comments})
+    return render(request, "comments/list.html", {"comments": comments})
 
 
 @login_required
 @is_admin_or_manager
 def comment_archive(request, id):
-    tid = request.GET.get('tid')
+    tid = request.GET.get("tid")
     try:
         comment = Comment.objects.get(pk=id)
     except Comment.DoesNotExist:
         raise Http404
-    if request.method == 'POST':
+    if request.method == "POST":
         if comment.archived is True:
             comment.archived = False
         else:
             comment.archived = True
         comment.save()
-        return redirect('tickets:detail', id=tid)
+        return redirect("tickets:detail", id=tid)
 
 
 @login_required
 def comment_create(request):
-    tid = request.GET.get('tid')
+    tid = request.GET.get("tid")
     try:
         ticket = Ticket.objects.get(pk=tid)
     except Ticket.DoesNotExist:
         raise Http404
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CommentCreateForm(data=request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
@@ -58,11 +58,11 @@ def comment_create(request):
             comment.user = request.user.profile
             comment.save()
             send_comment_create_email(request, comment, ticket)
-            messages.success(request, 'Comment created successfully')
-            return redirect('tickets:detail', id=tid)
+            messages.success(request, "Comment created successfully")
+            return redirect("tickets:detail", id=tid)
     else:
         form = CommentCreateForm()
-    return render(request, 'comments/create.html', {'form': form})
+    return render(request, "comments/create.html", {"form": form})
 
 
 @login_required
@@ -71,17 +71,17 @@ def comment_edit(request, id):
         comment = Comment.objects.get(pk=id)
     except Comment.DoesNotExist:
         raise Http404
-    tid = request.GET.get('tid')
+    tid = request.GET.get("tid")
     try:
         ticket = Ticket.objects.get(pk=tid)
     except Ticket.DoesNotExist:
         pass
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CommentCreateForm(data=request.POST, instance=comment)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Comment updated successfully')
+            messages.success(request, "Comment updated successfully")
             return redirect(ticket.get_absolute_url())
     else:
         form = CommentCreateForm(instance=comment)
-    return render(request, 'comments/edit.html', {'form': form})
+    return render(request, "comments/edit.html", {"form": form})
